@@ -25,4 +25,4 @@ for index in "${!SECT[@]}"; do
 done
 
 # DOMAIN/USER/PROJECT/<TRUNK||BRANCH>/FOLDER
-svn export $GHDOMAIN${SECT[0]}/${SECT[1]}/$BRANCH$FOLDER $OUT
+svn export -q $GHDOMAIN${SECT[0]}/${SECT[1]}/$BRANCH$FOLDER $OUT
