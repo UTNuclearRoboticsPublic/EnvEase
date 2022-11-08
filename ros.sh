@@ -80,9 +80,9 @@ elif [ $ros_version -eq 2 ]; then
   # Set ROS_DOMAIN_ID or discovery server
   if [[ $* == *--discovery_server* ]]; then
     # configure discovery server using FastDDS
+    ros2 daemon stop
     export RMW_IMPLEMENTATION=rmw_fastrtps_cpp
     export FASTRTPS_DEFAULT_PROFILES_FILE=super_client_configuration_file.xml
-    ros2 daemon stop
     ros2 daemon start
     export ROS_DISCOVERY_SERVER=$discovery_method
   else
