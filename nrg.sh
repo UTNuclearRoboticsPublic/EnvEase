@@ -1,6 +1,6 @@
 ### ROS User Parameters ###
 ## Common ROS Variables
-ros_distros=("galactic" "noetic")
+ros_distros=("noetic" "galactic")
 
 # List ROS workspaces in order. Later workspaces override earlier ones
 ros1_workspaces=()
@@ -8,6 +8,9 @@ ros2_workspaces=("lanl_ws")
 
 ## ROS1 Specific Variables
 ros_master_uri=http://localhost:11311/
+
+# Use the command 'ip address show' to see your interface names
+network_interface=wlo1
 
 ## ROS2 Specific Variables
 # Comment this out if you want to use FastDDS discovery servers
@@ -116,16 +119,16 @@ for distro in "${ros_distros[@]}"; do
   # Call the ros.sh configuration script according to the ROS version
   if [ $ros_version -eq 1 ]; then
     # ROS1
-    source $HOME/.nrg_bash/ros.sh ${distro} ${ros_master_uri} ${ros1_workspaces}
+    source $HOME/.nrg_bash/ros.sh ${distro} ${ros_master_uri} ${network_interface} ${ros1_workspaces}
   
   elif [ $ros_version -eq 2 ]; then
     # ROS2
     if [ -v ros_domain_id ]; then
       # Use normal ROS2 discovery using multicasting
-      source $HOME/.nrg_bash/ros.sh ${distro} ${ros_domain_id} ${ros2_workspaces}
+      source $HOME/.nrg_bash/ros.sh ${distro} ${ros_domain_id} "" ${ros2_workspaces}
     else
       # Use discovery server with FastDDS
-      source $HOME/.nrg_bash/ros.sh ${distro} ${ros_discovery_server} ${ros2_workspaces} --discovery_server
+      source $HOME/.nrg_bash/ros.sh ${distro} ${ros_discovery_server} "" ${ros2_workspaces} --discovery_server
     fi
   
   else
@@ -135,8 +138,8 @@ for distro in "${ros_distros[@]}"; do
   unset ros_version
 done
 
+# cleanup
 unset distro
-
 unset ros_distros
 unset ros1_workspaces
 unset ros2_workspaces
@@ -145,3 +148,5 @@ unset ros_domain_id
 unset ros_discovery_server
 unset platform_aliases
 unset project_aliases
+unset tool_aliases
+unset network_interface

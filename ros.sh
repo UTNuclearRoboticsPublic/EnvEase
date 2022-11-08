@@ -9,8 +9,19 @@ ros_distro=$1
 # 3. ROS_DISCOVERY_SERVER for a ROS2 system using FastDDS and discovery servers
 discovery_method=$2
 
+# The network interface we are using to connect (ROS 1 only)
+network_interface=$3
+
 # List in order. Later workspaces override earlier ones
-ros_workspaces=$3
+ros_workspaces=$4
+
+
+
+function get_ip_address()
+{
+  # Gets the IP address of a given interface name
+  ip_addr=$(ip -4 addr show $1 | grep -oP '(?<=inet\s)\d+(\.\d+){3}')
+}
 
 # Determine if this is a ROS1 or ROS2 distribution.
 source $HOME/.nrg_bash/functions.sh
@@ -19,6 +30,16 @@ ros_version=$(get_ros_version_for_distribution $ros_distro)
 if [ $ros_version -eq 1 ]; then
   # ROS1
   source /opt/ros/$ros_distro/setup.bash
+  
+  # Try to get IP address for the given network interface
+  # Use this IP for the ROS_IP env variable
+  get_ip_address $network_interface
+  if [[ ! -v ip_addr || $ip_addr == "" ]]; then
+    echo "Invalid network interface given."
+    return
+  fi
+  export ROS_IP=$ip_addr
+  unset ip_addr
   
   for ws in ${ros_workspaces[@]}; do
     source $HOME/$ws/devel/setup.bash
