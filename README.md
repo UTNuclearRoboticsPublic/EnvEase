@@ -38,7 +38,7 @@ You are now ready. When you open a bash terminal in the future, these scripts sh
 If that environment variable is not found, then the scripts did not run properly.
 
 ## Bash Aliases
-The script will source any alias files that you specify in the platform_aliases and project_aliases variables of nrg.sh. For example, setting
+The script will source any alias files that you specify in the ```platform_aliases``` and ```project_aliases``` variables of ```nrg.sh```. For example, setting
 
     platform_aliases=("spot" "walrus")  
     
