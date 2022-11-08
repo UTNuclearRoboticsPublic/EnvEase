@@ -24,7 +24,8 @@ ros_discovery_server="localhost:11311"
 
 ### List project or platform specific alias sets needed for your work ###
 # https://github.com/UTNuclearRobotics/bash_aliases
-platform_aliases=("spot" "walrus")
+tool_aliases=("catkin_tools")
+platform_aliases=("alph" "walrus")
 project_aliases=("arl_phoenix")
 
 
@@ -61,30 +62,49 @@ if [[ -v ros_domain_id ]]; then
   fi
 fi
 
+function handle_alias_file()
+{
+  # Args:
+  #   1. The class of the alias file. "platform", "tool", "project", or empty string
+  #   2. The name of the alias set.
 
-# Robot and project specific aliases
-for k in "${platform_aliases[@]}" "${project_aliases[@]}" "nrg_common"; do
-
-  aliases_dir=$HOME/.nrg_bash/aliases
-  alias_filename=${k}_aliases
-  alias_path=$aliases_dir/$alias_filename
-
+  local alias_class=$1
+  local aliases_dir=$HOME/.nrg_bash/aliases/$alias_class
+  local alias_filename=$2_aliases
+  local alias_path=$aliases_dir/$alias_filename
+  
+  # Create the subdirectory if it doesn't exist
+  if [ ! -d "$aliases_dir" ]; then
+    mkdir $aliases_dir
+  fi
+  
   # If we don't have the file, try to download it from the NRG GitHub
   if [ ! -f "$alias_path" ]; then
     echo "Downloading alias file $alias_filename to $aliases_dir"
     
-    github_location=https://github.com/UTNuclearRobotics/bash_aliases/blob/master
-    $HOME/.nrg_bash/github_downloader.sh $github_location/$alias_filename $aliases_dir
+    local github_location=https://github.com/UTNuclearRobotics/bash_aliases/blob/master
+    $HOME/.nrg_bash/github_downloader.sh $github_location/$alias_class/$alias_filename $aliases_dir
   fi
 
   source $alias_path
-  
-  unset aliases_dir
-  unset alias_filename
-  unset alias_path
+}
+
+handle_alias_file "" "nrg_common"
+
+for k in "${platform_aliases[@]}"; do
+  handle_alias_file "platform" $k
 done
 
+for k in "${project_aliases[@]}"; do
+  handle_alias_file "project" $k
+done
+
+for k in "${tool_aliases[@]}"; do
+  handle_alias_file "tool" $k
+done
 unset k
+
+
 
 # For each of the listed ROS distributions
 for distro in "${ros_distros[@]}"; do
