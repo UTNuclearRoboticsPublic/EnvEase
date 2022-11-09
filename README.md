@@ -46,7 +46,7 @@ Follow these steps to set up these automated features on your Ubuntu machine.
       
   <li>Run the setup script.</li>
   
-      ~/.nrg_bash.setup.sh
+      ~/.nrg_bash/setup.sh
       
   <li>Open the NRG script configuration file.</li>
   
