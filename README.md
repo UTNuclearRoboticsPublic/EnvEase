@@ -52,7 +52,7 @@ Follow these steps to set up these automated features on your Ubuntu machine.
   
       gedit ~/.nrg_bash/config.sh
       
-  <li>Edit the configuration variables in the top part of the file. Save and close.</li>
+  <li>Edit the configuration variables in config the file. Save and close.</li>
 </ol>
 
 You are now ready. When you open a bash terminal in the future, these scripts should be run. You can verify this by running this command in terminal:  
