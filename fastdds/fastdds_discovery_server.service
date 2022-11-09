@@ -3,8 +3,6 @@ Description=Service to launch a FastDDS discovery server.
 
 [Service]
 ExecStart=launch_fastdds_discovery_server.sh
-Environment=LD_LIBRARY_PATH=/opt/ros/galactic/lib
-Environment=PATH=/usr/bin:/opt/ros/galactic/bin
 Restart=on-failure
 
 [Install]
