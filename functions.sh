@@ -54,13 +54,13 @@ function handle_alias_file()
   #   2. The name of the alias set.
 
   local alias_class=$1
-  local aliases_dir=$HOME/.nrg_bash/aliases/$alias_class
+  local aliases_dir=$HOME/nrg_aliases/$alias_class
   local alias_filename=$2_aliases
   local alias_path=$aliases_dir/$alias_filename
   
   # Create the subdirectory if it doesn't exist
   if [ ! -d "$aliases_dir" ]; then
-    mkdir $aliases_dir
+    mkdir -p $aliases_dir
   fi
   
   # If we don't have the file, try to download it from the NRG GitHub

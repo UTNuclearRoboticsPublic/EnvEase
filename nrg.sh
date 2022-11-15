@@ -27,7 +27,9 @@
 ### DO NOT TOUCH ###
 ####################
 
-source $HOME/.nrg_bash/config.sh
+source $HOME/nrg_config.sh
+
+SCRIPT_DIR=$(dirname -- "$(readlink -f -- "${BASH_SOURCE[0]}")")
 
 # Input validation
 if [[ -v ros_domain_id ]]; then
@@ -37,7 +39,7 @@ if [[ -v ros_domain_id ]]; then
   fi
 fi
 
-source $HOME/.nrg_bash/functions.sh
+source $SCRIPT_DIR/functions.sh
 
 handle_alias_file "" "nrg_common"
 
@@ -58,23 +60,22 @@ unset k
 
 # For each of the listed ROS distributions
 for distro in "${ros_distros[@]}"; do
-
   # Determine if this is a ROS1 or ROS2 distribution.
   ros_version=$(get_ros_version_for_distribution $distro)
   
   # Call the ros.sh configuration script according to the ROS version
   if [ $ros_version -eq 1 ]; then
     # ROS1
-    source $HOME/.nrg_bash/ros.sh ${distro} ${ros_master_uri} ${network_interface} ${ros1_workspaces}
+    source $SCRIPT_DIR/ros.sh ${distro} ${ros_master_uri} ${network_interface} ${ros1_workspaces}
   
   elif [ $ros_version -eq 2 ]; then
     # ROS2
     if [ -v ros_domain_id ]; then
       # Use normal ROS2 discovery using multicasting
-      source $HOME/.nrg_bash/ros.sh ${distro} ${ros_domain_id} "" ${ros2_workspaces}
+      source $SCRIPT_DIR/ros.sh ${distro} ${ros_domain_id} "" ${ros2_workspaces}
     else
       # Use discovery server with FastDDS
-      source $HOME/.nrg_bash/ros.sh ${distro} ${ros_discovery_server} "" ${ros2_workspaces} --discovery_server
+      source $SCRIPT_DIR/ros.sh ${distro} ${ros_discovery_server} "" ${ros2_workspaces} --discovery_server
     fi
   
   else

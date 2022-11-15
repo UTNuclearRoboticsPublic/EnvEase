@@ -23,7 +23,7 @@
 #
 ############################################################################################
 
-#!/bin/bash
+SCRIPT_DIR=$(dirname -- "$(readlink -f -- "${BASH_SOURCE[0]}")")
 
 # ROS distribution to source
 ros_distro=$1
@@ -41,7 +41,7 @@ network_interface=$3
 ros_workspaces=$4
 
 # Determine if this is a ROS1 or ROS2 distribution.
-source $HOME/.nrg_bash/functions.sh
+source $SCRIPT_DIR/functions.sh
 ros_version=$(get_ros_version_for_distribution $ros_distro)
 
 if [ $ros_version -eq 1 ]; then
@@ -66,7 +66,7 @@ if [ $ros_version -eq 1 ]; then
   export PATH=$HOME/catkin-docker:$PATH
   export ROS_MASTER_URI=$discovery_method
 elif [ $ros_version -eq 2 ]; then
-  # ROS2  
+  # ROS2
   source /opt/ros/$ros_distro/setup.bash
   source /usr/share/colcon_cd/function/colcon_cd.sh
   export _colcon_cd_root=/opt/ros/$ros_distro/
