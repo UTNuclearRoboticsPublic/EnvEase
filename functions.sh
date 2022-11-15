@@ -54,7 +54,7 @@ function handle_alias_file()
   #   2. The name of the alias set.
 
   local alias_class=$1
-  local aliases_dir=$HOME/nrg_aliases/$alias_class
+  local aliases_dir=$HOME/.nrg_aliases/$alias_class
   local alias_filename=$2_aliases
   local alias_path=$aliases_dir/$alias_filename
   
