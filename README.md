@@ -46,13 +46,13 @@ Follow these steps to set up these automated features on your Ubuntu machine.
       
   <li>Run the setup script.</li>
   
-      ~/.nrg_bash.setup.sh
+      ~/.nrg_bash/setup.sh
       
   <li>Open the NRG script configuration file.</li>
   
       gedit ~/.nrg_bash/config.sh
       
-  <li>Edit the configuration variables in the top part of the file. Save and close.</li>
+  <li>Edit the configuration variables in config the file. Save and close.</li>
 </ol>
 
 You are now ready. When you open a bash terminal in the future, these scripts should be run. You can verify this by running this command in terminal:  
@@ -66,9 +66,9 @@ The script will source any alias files that you specify in the ```platform_alias
 
     platform_aliases=("spot" "walrus")  
     
-will cause the script to search in the ```~/.nrg_bash/aliases``` folder for the files ```spot_aliases``` and ```walrus_aliases```, and source them. The script will also automatically source the file ```nrg_common_aliases```. If any of these files is not found, the script will attempt to download it from the NRG GitHub repository ```bash_aliases```.
+will cause the script to search in the ```~/.nrg_bash/aliases``` folder for the files ```spot_aliases``` and ```walrus_aliases```, and source them. The script will also automatically source the file ```nrg_common_aliases```. If any of these files is not found, the script will attempt to download it from the NRG GitHub repository ```nrg_bash_aliases```.
 
 You are free (and encouraged!) to add or append to alias files for your robot platforms and projects.
-https://github.com/UTNuclearRobotics/bash_aliases
+https://github.com/UTNuclearRobotics/nrg_bash_aliases
 
 You may also put personal aliases in ```~/.bash_aliases``` as usual.
