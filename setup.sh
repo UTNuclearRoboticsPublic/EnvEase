@@ -1,8 +1,11 @@
 #!/bin/bash
 
 # create install location in /opt
-DEST_DIR=/opt/nuclearrobotics
-sudo mkdir -p $DEST_DIR
+OPT_DIR=/opt/nuclearrobotics
+mkdir -p $OPT_DIR
+
+# files in this directory will be placed in the home directory of any newly created users
+SKEL_DIR=/etc/skel
 
 SCRIPT_DIR=$(dirname -- "$(readlink -f -- "${BASH_SOURCE[0]}")")
 
@@ -10,12 +13,14 @@ SCRIPT_DIR=$(dirname -- "$(readlink -f -- "${BASH_SOURCE[0]}")")
 /bin/bash $SCRIPT_DIR/fastdds/install_fastdds_service.sh
 
 # copy scripts to install location
-sudo cp $SCRIPT_DIR/nrg.sh $DEST_DIR
-sudo cp $SCRIPT_DIR/ros.sh $DEST_DIR
-sudo cp $SCRIPT_DIR/functions.sh $DEST_DIR
+cp $SCRIPT_DIR/nrg.sh $OPT_DIR
+cp $SCRIPT_DIR/ros.sh $OPT_DIR
+cp $SCRIPT_DIR/functions.sh $OPT_DIR
+cp $SCRIPT_DIR/github_downloader.sh $OPT_DIR
+cp -a $SCRIPT_DIR/skel/. $SKEL_DIR/
 
 # create config file in the home directory
-cp $SCRIPT_DIR/config.sh.template $HOME/nrg_config.sh
+cp $SCRIPT_DIR/skel/nrg_config.sh $HOME
 
 # source our NRG config script in the bashrc
 BASHRC=$HOME/.bashrc

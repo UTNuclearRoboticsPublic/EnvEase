@@ -52,6 +52,8 @@ function handle_alias_file()
   # Args:
   #   1. The class of the alias file. "platform", "tool", "project", or empty string
   #   2. The name of the alias set.
+  
+  SCRIPT_DIR=$(dirname -- "$(readlink -f -- "${BASH_SOURCE[0]}")")
 
   local alias_class=$1
   local aliases_dir=$HOME/.nrg_aliases/$alias_class
@@ -68,7 +70,7 @@ function handle_alias_file()
     echo "Downloading alias file $alias_filename to $aliases_dir"
     
     local github_location=https://github.com/UTNuclearRobotics/bash_aliases/blob/master
-    $HOME/.nrg_bash/github_downloader.sh $github_location/$alias_class/$alias_filename $aliases_dir
+    $SCRIPT_DIR/github_downloader.sh $github_location/$alias_class/$alias_filename $aliases_dir
   fi
 
   source $alias_path
