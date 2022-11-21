@@ -69,7 +69,7 @@ function handle_alias_file()
   if [ ! -f "$alias_path" ]; then
     echo "Downloading alias file $alias_filename to $aliases_dir"
     
-    local github_location=https://github.com/UTNuclearRobotics/bash_aliases/blob/master
+    local github_location=https://github.com/UTNuclearRobotics/nrg_bash_aliases/blob/master
     $SCRIPT_DIR/github_downloader.sh $github_location/$alias_class/$alias_filename $aliases_dir
   fi
 
