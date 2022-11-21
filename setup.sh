@@ -4,6 +4,9 @@
 OPT_DIR=/opt/nuclearrobotics
 mkdir -p $OPT_DIR
 
+# User home directory. This works even if the user runs the script as root
+USER_HOME=$(getent passwd $SUDO_USER | cut -d: -f6)
+
 # files in this directory will be placed in the home directory of any newly created users
 SKEL_DIR=/etc/skel
 
@@ -20,10 +23,10 @@ cp $SCRIPT_DIR/github_downloader.sh $OPT_DIR
 cp -a $SCRIPT_DIR/skel/. $SKEL_DIR/
 
 # create config file in the home directory
-cp $SCRIPT_DIR/skel/nrg_config.sh $HOME
+cp $SCRIPT_DIR/skel/nrg_config.sh $USER_HOME
 
 # source our NRG config script in the bashrc
-BASHRC=$HOME/.bashrc
+BASHRC=$USER_HOME/.bashrc
 if ! grep -q "source ${DEST_DIR}/nrg.sh" ${BASHRC}; then
     echo "source ${DEST_DIR}/nrg.sh" >> $BASHRC
 fi
