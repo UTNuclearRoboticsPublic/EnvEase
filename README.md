@@ -40,22 +40,22 @@ license is explicitly included within the text of each file.
 Follow these steps to set up these automated features on your Ubuntu machine.
 
 <ol>
-  <li>Clone this repo into a hidden folder in your home directory.</li>
+  <li>Clone this repo into your home directory.</li>
   
-      git clone git@github.com:UTNuclearRobotics/nrg_bash.git ~/.nrg_bash
+      git clone git@github.com:UTNuclearRobotics/nrg_bash.git
       
-  <li>Run the setup script.</li>
+  <li>Run the setup script. This will install the scripts to the location ```/opt/nuclearrobotics``` and place a file ```nrg_config.sh``` in your home directory.</li>
   
-      ~/.nrg_bash/setup.sh
+      ~/nrg_bash/setup.sh
       
   <li>Open the NRG script configuration file.</li>
   
-      gedit ~/.nrg_bash/config.sh
+      gedit ~/nrg_config.sh
       
   <li>Edit the configuration variables in config the file. Save and close.</li>
 </ol>
 
-You are now ready. When you open a bash terminal in the future, these scripts should be run. You can verify this by running this command in terminal:  
+You are now ready and can delete the repository from your home folder. When you open a bash terminal in the future, these scripts should be run. You can verify this by running this command in terminal:  
 
     echo $ROS_DISTRO  
     
