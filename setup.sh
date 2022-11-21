@@ -24,10 +24,11 @@ cp -a $SCRIPT_DIR/skel/. $SKEL_DIR/
 
 # create config file in the home directory
 cp $SCRIPT_DIR/skel/nrg_config.sh $USER_HOME
+chown $SUDO_USER $USER_HOME/nrg_config.sh
 
 # source our NRG config script in the bashrc
 BASHRC=$USER_HOME/.bashrc
-if ! grep -q "source ${DEST_DIR}/nrg.sh" ${BASHRC}; then
-    echo "source ${DEST_DIR}/nrg.sh" >> $BASHRC
+if ! grep -q "source ${OPT_DIR}/nrg.sh" ${BASHRC}; then
+    echo "source ${OPT_DIR}/nrg.sh" >> $BASHRC
 fi
 
