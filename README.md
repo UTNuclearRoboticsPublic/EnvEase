@@ -44,9 +44,9 @@ Follow these steps to set up these automated features on your Ubuntu machine.
   
       git clone git@github.com:UTNuclearRobotics/nrg_bash.git
       
-  <li>Run the setup script. This will install the scripts to the location ```/opt/nuclearrobotics``` and place a file ```nrg_config.sh``` in your home directory.</li>
+  <li>Run the setup script. This will install the scripts to the location /opt/nuclearrobotics and place a file nrg_config.sh in your home directory.</li>
   
-      ~/nrg_bash/setup.sh
+      sudo ~/nrg_bash/setup.sh
       
   <li>Open the NRG script configuration file.</li>
   
