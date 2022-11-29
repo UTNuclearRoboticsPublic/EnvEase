@@ -79,13 +79,14 @@ for distro in "${ros_distros[@]}"; do
     fi
   
   else
-    echo "Invalid ROS distribution '${ros_distro}' selected."
+    echo "Invalid ROS distribution '${distro}' selected."
     return
   fi
   unset ros_version
 done
 
 # cleanup
+unset SCRIPT_DIR
 unset distro
 unset ros_distros
 unset ros1_workspaces

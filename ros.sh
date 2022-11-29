@@ -35,7 +35,7 @@ ros_distro=$1
 discovery_method=$2
 
 # The network interface we are using to connect (ROS 1 only)
-network_interface=$3
+net_intfce=$3
 
 # List in order. Later workspaces override earlier ones
 ros_workspaces=$4
@@ -50,7 +50,7 @@ if [ $ros_version -eq 1 ]; then
   
   # Try to get IP address for the given network interface
   # Use this IP for the ROS_IP env variable
-  get_ip_address $network_interface
+  get_ip_address $net_intfce
   if [[ ! -v ip_addr || $ip_addr == "" ]]; then
     echo "Invalid network interface given."
     return
@@ -99,3 +99,4 @@ unset ros_distro
 unset discovery_method
 unset ros_workspaces
 unset ros_version
+unset net_intfce
