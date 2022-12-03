@@ -56,7 +56,7 @@ function handle_alias_file()
   SCRIPT_DIR=$(dirname -- "$(readlink -f -- "${BASH_SOURCE[0]}")")
 
   local alias_class=$1
-  local aliases_dir=$HOME/.nrg_aliases/$alias_class
+  local aliases_dir=$HOME/.nrg_env/bash_aliases/$alias_class
   local alias_filename=$2_aliases
   local alias_path=$aliases_dir/$alias_filename
   

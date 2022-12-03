@@ -1,0 +1,177 @@
+#! /usr/bin/python3
+############################################################################################
+#      Copyright : Copyright© The University of Texas at Austin, 2022. All rights reserved.
+#                
+#          All files within this directory are subject to the following, unless an alternative
+#          license is explicitly included within the text of each file.
+#
+#          This software and documentation constitute an unpublished work
+#          and contain valuable trade secrets and proprietary information
+#          belonging to the University. None of the foregoing material may be
+#          copied or duplicated or disclosed without the express, written
+#          permission of the University. THE UNIVERSITY EXPRESSLY DISCLAIMS ANY
+#          AND ALL WARRANTIES CONCERNING THIS SOFTWARE AND DOCUMENTATION,
+#          INCLUDING ANY WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A
+#          PARTICULAR PURPOSE, AND WARRANTIES OF PERFORMANCE, AND ANY WARRANTY
+#          THAT MIGHT OTHERWISE ARISE FROM COURSE OF DEALING OR USAGE OF TRADE.
+#          NO WARRANTY IS EITHER EXPRESS OR IMPLIED WITH RESPECT TO THE USE OF
+#          THE SOFTWARE OR DOCUMENTATION. Under no circumstances shall the
+#          University be liable for incidental, special, indirect, direct or
+#          consequential damages or loss of profits, interruption of business,
+#          or related expenses which may arise from use of software or documentation,
+#          including but not limited to those resulting from defects in software
+#          and/or documentation, or loss or inaccuracy of data of any kind.
+#
+############################################################################################
+
+import argparse
+from gi.repository import Gio
+import os
+from pathlib import Path
+import shutil
+import subprocess
+import sys
+
+def create_parser() -> argparse.ArgumentParser:
+  """ Parses the command line args. """
+
+  parser = argparse.ArgumentParser(description="Manages NRG environment configurations.")
+  parser.add_argument('command', type=str,
+                      help='add, rm, modify, list, show, or set')
+  parser.add_argument('target', type=str, nargs='?', default='',
+                      help="The name of the environment configuration to act on."
+                           "Not used with 'list' or 'show' commands.")
+
+  return parser
+
+class NrgEnv():
+
+  def __init__(self):
+    self.env_dir = Path.home() / '.nrg_env'
+    self.configs_dir = self.env_dir / 'configs'
+
+  def add(self, target: str) -> int:
+    src = '/opt/nuclearrobotics/config_template.sh'
+    dest = self.configs_dir / (target + '.sh')
+
+    if not src.exists():
+      print('Error: Configuration template file is missing from expected location /opt/nuclearrobotics')
+      return 10
+
+    if dest.exists():
+      print('Error: Configuration {} already exists.'.format(target))
+      return 10
+
+    try:
+      shutil.copyfile(src, str(dest))
+    except:
+      print('Error: Failed to copy new configuration file from template.')
+      return 10
+
+    return self.modify(target)
+
+  def rm(self, target: str) -> int:
+    dest = self.configs_dir / (target + '.sh')
+
+    if not dest.exists():
+      print('Error: Configuration {} does not exist.'.format(target))
+      return 10
+    
+    try:
+      dest.unlink()
+    except:
+      print('Error: Failed to remove configuration file.')
+      return 10
+
+    return 0
+
+  def modify(self, target: str) -> int:
+    dest = self.configs_dir / (target + '.sh')
+
+    if not dest.exists():
+      print('Error: Configuration {} does not exist.'.format(target))
+      return 10
+
+    try:
+      subprocess.run(['xdg-open', str(dest)], check=True)
+    except subprocess.CalledProcessError as err:
+      print('Error: Default text editor exited with code ' + str(err.returncode))
+      return 10
+    except:
+      print('Error: Failed to open default text editor.')
+      return 10
+
+    return 0
+
+  def list(self, _) -> int:
+    p = self.configs_dir.glob('**/*')
+    config_files = [x for x in p if x.is_file() and x.suffix == '.sh']
+
+    for f in config_files:
+      print(f.stem)
+
+    if not config_files:
+      print('No configurations')
+
+    return 0
+
+  def show(self, _) -> int:
+
+    if 'NRG_ENV' in os.environ:
+      print(os.environ['NRG_ENV'])
+    else:
+      print('No environment currently set.')
+
+    return 0
+
+  def set(self, target: str) -> int:
+    config_file = self.configs_dir / (target + '.sh')
+
+    if not config_file.exists():
+      print('Error: Configuration {} does not exist.'.format(target))
+      return 10
+
+    dest = self.env_dir / 'cur_env.sh'
+
+    try:
+      with open(dest,'w') as f:
+        f.write("export NRG_ENV=")
+        f.write(target)
+        f.write('\n')
+    except OSError as err:
+      print('Failed to edit cur_env.sh. ' + err.strerror)
+      return 10
+
+    print('Configuration set. Be sure to source your bashrc file.')
+
+    return 0
+
+  def main(self, args):
+    # parse arguments
+    parser = create_parser()
+    parsed_args = parser.parse_args(args[1:])
+
+    if not hasattr(self, parsed_args.command):
+      print('Error: Unrecognized command ' + parsed_args.command)
+      parser.print_help()
+      return 1
+
+    unary_commands = {'list', 'show'}
+
+    if parsed_args.command in unary_commands:
+      if parsed_args.target != '':
+        print("Error: argument 'target' is not used with this command")
+        parser.print_help()
+        return 2
+    else:
+      if parsed_args.target == '':
+        print("Error: argument 'target' is required for this command")
+        parser.print_help()
+        return 3
+    
+    # use dispatch pattern to invoke method with same name
+    return getattr(self, parsed_args.command)(parsed_args.target)
+
+if __name__ == '__main__':
+  result = NrgEnv().main(sys.argv)
+  exit(result)

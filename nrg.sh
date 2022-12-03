@@ -27,7 +27,9 @@
 ### DO NOT TOUCH ###
 ####################
 
-source $HOME/nrg_config.sh
+# Look up our currently set NRG environment and source the config for it
+source $HOME/.nrg_env/cur_env.sh
+source $HOME/.nrg_env/configs/$NRG_ENV.sh
 
 SCRIPT_DIR=$(dirname -- "$(readlink -f -- "${BASH_SOURCE[0]}")")
 
