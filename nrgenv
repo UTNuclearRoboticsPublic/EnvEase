@@ -25,7 +25,6 @@
 ############################################################################################
 
 import argparse
-from gi.repository import Gio
 import os
 from pathlib import Path
 import shutil
