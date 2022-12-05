@@ -29,6 +29,10 @@
 
 # Look up our currently set NRG environment and source the config for it
 source $HOME/.nrg_env/cur_env.sh
+if [ $NRG_ENV == none ]; then
+  echo "No NRG configuration set. Use the nrgenv command to set one."
+  return
+fi
 source $HOME/.nrg_env/configs/$NRG_ENV.sh
 
 SCRIPT_DIR=$(dirname -- "$(readlink -f -- "${BASH_SOURCE[0]}")")

@@ -1,1 +1,1 @@
-NRG_ENV=example
+NRG_ENV=none
