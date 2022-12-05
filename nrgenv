@@ -138,7 +138,7 @@ class NrgEnv():
 
   def show(self, *_) -> int:
 
-    if 'NRG_ENV' in os.environ:
+    if 'NRG_ENV' in os.environ and os.environ['NRG_ENV'] != 'none':
       print(os.environ['NRG_ENV'])
     else:
       print('No environment currently set.')
