@@ -24,11 +24,8 @@ cp $SCRIPT_DIR/config_template.sh $OPT_DIR
 cp -a $SCRIPT_DIR/skel/. $SKEL_DIR/
 cp $SCRIPT_DIR/nrgenv /bin
 
-# create config file in the home directory
-mkdir -p $USER_HOME/nrg_env/configs
-mkdir -p $USER_HOME/nrg_env/nrg_aliases
-
-cp -a $SCRIPT_DIR/skel/.nrg_env $USER_HOME
+# create NRG environment directory in the home directory
+cp -r $SCRIPT_DIR/skel/.nrg_env $USER_HOME
 chown -R $SUDO_USER $USER_HOME/.nrg_env
 
 # source our NRG config script in the bashrc
