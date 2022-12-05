@@ -36,7 +36,7 @@ def create_parser() -> argparse.ArgumentParser:
 
   parser = argparse.ArgumentParser(description="Manages NRG environment configurations.")
   parser.add_argument('command', type=str,
-                      help='add, cp, rm, modify, list, show, or set')
+                      help='add, cp, rm, modify, clear, list, show, or set')
   parser.add_argument('target', type=str, nargs='?', default='',
                       help="The name of the environment configuration to act on."
                            "Not used with 'list' or 'show' commands.")
@@ -145,10 +145,21 @@ class NrgEnv():
 
     return 0
 
+  def clear(self, *_) -> int:
+    
+    # iterate over files in configs directory
+    config_files = Path(self.configs_dir).glob('*')
+    for file in config_files:
+      self.rm(file.stem, None)
+
+    self.set('none', None)
+
+    return 0
+
   def set(self, target: str, _) -> int:
     config_file = self.configs_dir / (target + '.sh')
 
-    if not config_file.exists():
+    if not config_file.exists() and target != 'none':
       print('Error: Configuration {} does not exist.'.format(target))
       return 10
 
@@ -172,7 +183,7 @@ class NrgEnv():
     parser = create_parser()
     parsed_args = parser.parse_args(args[1:])
 
-    nullary_commands = {'list', 'show'}
+    nullary_commands = {'list', 'show', 'clear'}
     unary_commands = {'add', 'rm', 'modify', 'set'}
     binary_commands = {'cp'}
 
