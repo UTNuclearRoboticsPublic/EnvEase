@@ -50,7 +50,7 @@ class NrgEnv():
     self.configs_dir = self.env_dir / 'configs'
 
   def add(self, target: str) -> int:
-    src = '/opt/nuclearrobotics/config_template.sh'
+    src = Path('/opt/nuclearrobotics/config_template.sh')
     dest = self.configs_dir / (target + '.sh')
 
     if not src.exists():
