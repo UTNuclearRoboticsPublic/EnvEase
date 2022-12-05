@@ -6,6 +6,9 @@ ros_distros=("galactic" "noetic")
 ros1_workspaces=("a_ros1_ws" "another_ros1_ws")
 ros2_workspaces=("a_ros2_ws")
 
+# If true, sets additional environment variables needed to operate the ros1_bridge package
+use_ros1_bridge=false
+
 ## ROS1 Specific Variables
 ros_master_uri=http://localhost:11311/
 

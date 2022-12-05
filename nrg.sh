@@ -58,6 +58,17 @@ for k in "${tool_aliases[@]}"; do
 done
 unset k
 
+# Set environment variables needed by ros1_bridge
+if [ ${use_ros1_bridge} ]; then
+  # Make sure that both a ROS1 distro and a ROS2 distro are specified
+  if [ ${#ros1_workspaces[@]} -eq 0 ] || [${#ros2_workspaces[@]} -eq 0]; then
+    echo "Error: With use_ros1_bridge set true, you must specify both a ROS1 distribution and a ROS2 distribution."
+    return
+  fi
+
+  ROS1_INSTALL_PATH=/opt/ros/${ros1_workspaces[0]}/setup.bash
+  ROS1_INSTALL_PATH=/opt/ros/${ros2_workspaces[0]}/setup.bash
+fi
 
 
 # For each of the listed ROS distributions
@@ -100,3 +111,4 @@ unset platform_aliases
 unset project_aliases
 unset tool_aliases
 unset network_interface
+unset use_ros1_bridge
