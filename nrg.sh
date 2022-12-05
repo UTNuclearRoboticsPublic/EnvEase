@@ -63,7 +63,7 @@ done
 unset k
 
 # Set environment variables needed by ros1_bridge
-if [ ${use_ros1_bridge} ]; then
+if [ "${use_ros1_bridge}" == true ]; then
   # Make sure that both a ROS1 distro and a ROS2 distro are specified
   if [ ${#ros1_workspaces[@]} -eq 0 ] || [${#ros2_workspaces[@]} -eq 0]; then
     echo "Error: With use_ros1_bridge set true, you must specify both a ROS1 distribution and a ROS2 distribution."
