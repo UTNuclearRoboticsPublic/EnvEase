@@ -36,10 +36,12 @@ def create_parser() -> argparse.ArgumentParser:
 
   parser = argparse.ArgumentParser(description="Manages NRG environment configurations.")
   parser.add_argument('command', type=str,
-                      help='add, rm, modify, list, show, or set')
+                      help='add, cp, rm, modify, list, show, or set')
   parser.add_argument('target', type=str, nargs='?', default='',
                       help="The name of the environment configuration to act on."
                            "Not used with 'list' or 'show' commands.")
+  parser.add_argument('dest', type=str, nargs='?', default='',
+                      help="The destination configuration name, for use with the 'cp' command")
 
   return parser
 
@@ -49,7 +51,7 @@ class NrgEnv():
     self.env_dir = Path.home() / '.nrg_env'
     self.configs_dir = self.env_dir / 'configs'
 
-  def add(self, target: str) -> int:
+  def add(self, target: str, _) -> int:
     src = Path('/opt/nuclearrobotics/config_template.sh')
     dest = self.configs_dir / (target + '.sh')
 
@@ -69,7 +71,27 @@ class NrgEnv():
 
     return self.modify(target)
 
-  def rm(self, target: str) -> int:
+  def cp(self, target: str, dest: str) -> int:
+    src = self.configs_dir / (target + '.sh')
+    dest = self.configs_dir / (dest + '.sh')
+
+    if src == dest:
+      print('Error: Source and destination configuration names are the same.'.format(target))
+      return 10
+
+    if not src.exists():
+      print('Error: Configuration {} does not exist.'.format(target))
+      return 10
+
+    try:
+      shutil.copyfile(str(src), str(dest))
+    except:
+      print('Error: Failed to copy configuration file.')
+      return 10
+
+    return 0
+
+  def rm(self, target: str, _) -> int:
     dest = self.configs_dir / (target + '.sh')
 
     if not dest.exists():
@@ -84,7 +106,7 @@ class NrgEnv():
 
     return 0
 
-  def modify(self, target: str) -> int:
+  def modify(self, target: str, _) -> int:
     dest = self.configs_dir / (target + '.sh')
 
     if not dest.exists():
@@ -102,7 +124,7 @@ class NrgEnv():
 
     return 0
 
-  def list(self, _) -> int:
+  def list(self, *_) -> int:
     p = self.configs_dir.glob('**/*')
     config_files = [x for x in p if x.is_file() and x.suffix == '.sh']
 
@@ -114,7 +136,7 @@ class NrgEnv():
 
     return 0
 
-  def show(self, _) -> int:
+  def show(self, *_) -> int:
 
     if 'NRG_ENV' in os.environ:
       print(os.environ['NRG_ENV'])
@@ -123,7 +145,7 @@ class NrgEnv():
 
     return 0
 
-  def set(self, target: str) -> int:
+  def set(self, target: str, _) -> int:
     config_file = self.configs_dir / (target + '.sh')
 
     if not config_file.exists():
@@ -150,26 +172,32 @@ class NrgEnv():
     parser = create_parser()
     parsed_args = parser.parse_args(args[1:])
 
-    if not hasattr(self, parsed_args.command):
-      print('Error: Unrecognized command ' + parsed_args.command)
-      parser.print_help()
-      return 1
+    nullary_commands = {'list', 'show'}
+    unary_commands = {'add', 'rm', 'modify', 'set'}
+    binary_commands = {'cp'}
 
-    unary_commands = {'list', 'show'}
-
-    if parsed_args.command in unary_commands:
+    if parsed_args.command in nullary_commands:
       if parsed_args.target != '':
         print("Error: argument 'target' is not used with this command")
         parser.print_help()
         return 2
-    else:
+    elif parsed_args.command in unary_commands:
       if parsed_args.target == '':
         print("Error: argument 'target' is required for this command")
         parser.print_help()
         return 3
+    elif parsed_args.command in binary_commands:
+      if parsed_args.target == '' or parsed_args.dest == '':
+        print("Error: arguments 'target' and 'dest' are required for this command")
+        parser.print_help()
+        return 4
+    else:
+      print('Error: Unrecognized command ' + parsed_args.command)
+      parser.print_help()
+      return 1
     
     # use dispatch pattern to invoke method with same name
-    return getattr(self, parsed_args.command)(parsed_args.target)
+    return getattr(self, parsed_args.command)(parsed_args.target, parsed_args.dest)
 
 if __name__ == '__main__':
   result = NrgEnv().main(sys.argv)
