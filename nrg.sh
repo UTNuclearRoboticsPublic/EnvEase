@@ -27,6 +27,12 @@
 ### DO NOT TOUCH ###
 ####################
 
+SCRIPT_DIR=$(dirname -- "$(readlink -f -- "${BASH_SOURCE[0]}")")
+
+# Get our common aliases
+source $SCRIPT_DIR/functions.sh
+handle_alias_file "" "nrg_common"
+
 # Sets up bash tab completion for our nrgenv script
 eval "$(register-python-argcomplete3 nrgenv)"
 
@@ -38,8 +44,6 @@ if [ $NRG_ENV == none ]; then
 fi
 source $HOME/.nrg_env/configs/$NRG_ENV.sh
 
-SCRIPT_DIR=$(dirname -- "$(readlink -f -- "${BASH_SOURCE[0]}")")
-
 # Input validation
 if [[ -v ros_domain_id ]]; then
   if [ $ros_domain_id -lt 0 ] || [ $ros_domain_id -gt 232 ] || [[ $ros_domain_id -gt 101 && $ros_domain_id -lt 215 ]]; then
@@ -47,10 +51,6 @@ if [[ -v ros_domain_id ]]; then
     return
   fi
 fi
-
-source $SCRIPT_DIR/functions.sh
-
-handle_alias_file "" "nrg_common"
 
 for k in "${platform_aliases[@]}"; do
   handle_alias_file "platform" $k
