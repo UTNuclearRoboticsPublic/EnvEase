@@ -29,6 +29,7 @@ import argcomplete
 
 import os
 from pathlib import Path
+import re
 import shutil
 import subprocess
 import sys
@@ -211,13 +212,23 @@ def set(args: argparse.Namespace) -> int:
 
   dest = env_dir / 'cur_env.sh'
 
+  # read in existing file contents
+  try:
+    with open(dest,'r') as f:
+      filedata = f.read()
+  except OSError as err:
+    print('Failed to open cur_env.sh for editing. ' + err.strerror)
+    return 10
+
+  # change the variable value
+  filedata = set_variable_value(filedata, 'NRG_ENV', args.target)
+
+  # overwrite modified data back to file
   try:
     with open(dest,'w') as f:
-      f.write("export NRG_ENV=")
-      f.write(args.target)
-      f.write('\n')
+      f.write(filedata)
   except OSError as err:
-    print('Failed to edit cur_env.sh. ' + err.strerror)
+    print('Failed to write changes to cur_env.sh. ' + err.strerror)
     return 10
 
   print('Configuration set. Be sure to source your bashrc file.')
@@ -229,6 +240,14 @@ def clear_active_config() -> None:
   ns = argparse.Namespace()
   setattr(ns, 'target', 'none')
   set(ns)
+
+def set_variable_value(contents: str, variable: str, value: str) -> str:
+  if re.search('{}=.*'.format(variable), contents) == None:
+    raise ValueError('Could not edit value of variable {} as the variable does not exist.')
+
+  return re.sub('{}=.*'.format(variable),
+                'NRG_ENV={}'.format(value),
+                contents)
 
 def main(args):
   # parse arguments
