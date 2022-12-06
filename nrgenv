@@ -87,6 +87,10 @@ def add(args: argparse.Namespace) -> int:
   src = Path('/opt/nuclearrobotics/config_template.sh')
   dest = configs_dir / (args.target + '.sh')
 
+  if args.target == 'none':
+    print("Error: Cannot name a config 'none' as this is reserved.")
+    return 10
+
   if not src.exists():
     print('Error: Configuration template file is missing from expected location /opt/nuclearrobotics')
     return 10
