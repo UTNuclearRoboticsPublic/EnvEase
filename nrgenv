@@ -210,26 +210,7 @@ def set(args: argparse.Namespace) -> int:
     print('Error: Configuration {} does not exist.'.format(args.target))
     return 10
 
-  dest = env_dir / 'cur_env.sh'
-
-  # read in existing file contents
-  try:
-    with open(dest,'r') as f:
-      filedata = f.read()
-  except OSError as err:
-    print('Failed to open cur_env.sh for editing. ' + err.strerror)
-    return 10
-
-  # change the variable value
-  filedata = set_variable_value(filedata, 'NRG_ENV', args.target)
-
-  # overwrite modified data back to file
-  try:
-    with open(dest,'w') as f:
-      f.write(filedata)
-  except OSError as err:
-    print('Failed to write changes to cur_env.sh. ' + err.strerror)
-    return 10
+  edit_metavariable_file('NRG_ENV', args.target)
 
   print('Configuration set. Be sure to source your bashrc file.')
 
@@ -240,6 +221,30 @@ def clear_active_config() -> None:
   ns = argparse.Namespace()
   setattr(ns, 'target', 'none')
   set(ns)
+
+def edit_metavariable_file(variable: str, value: str) -> bool:
+  metavar_file = env_dir / 'cur_env.sh'
+
+  # read in existing file contents
+  try:
+    with open(metavar_file, 'r') as f:
+      filedata = f.read()
+  except OSError as err:
+    print('Failed to open cur_env.sh for editing. ' + err.strerror)
+    return False
+
+  # change the variable value
+  filedata = set_variable_value(filedata, variable, value)
+
+  # overwrite modified data back to file
+  try:
+    with open(metavar_file, 'w') as f:
+      f.write(filedata)
+  except OSError as err:
+    print('Failed to write changes to cur_env.sh. ' + err.strerror)
+    return False
+
+  return True
 
 def set_variable_value(contents: str, variable: str, value: str) -> str:
   if re.search('{}=.*'.format(variable), contents) == None:
