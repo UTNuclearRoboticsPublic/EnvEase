@@ -1,1 +1,2 @@
 NRG_ENV=none
+NRG_VERBOSE=false

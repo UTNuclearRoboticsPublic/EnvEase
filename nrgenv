@@ -45,13 +45,14 @@ def create_parser() -> argparse.ArgumentParser:
   # subcommands
   subparsers = parser.add_subparsers(title='subcommands')
   add_parser = subparsers.add_parser('add', help='Create a new config')
-  rm_parser = subparsers.add_parser('rm', help='Remove a config')
   modify_parser = subparsers.add_parser('modify', help='Modify an existing config')
+  cp_parser = subparsers.add_parser('cp', help='Copy a config with a new name')
+  rm_parser = subparsers.add_parser('rm', help='Remove a config')
   set_parser = subparsers.add_parser('set', help='Set the active config')
   clear_parser = subparsers.add_parser('clear', help='Delete all the stored configs')
   list_parser = subparsers.add_parser('list', help='List all the stored configs')
   show_parser = subparsers.add_parser('show', help='Show the active config')
-  cp_parser = subparsers.add_parser('cp', help='Copy a config with a new name')
+  verbose_parser = subparsers.add_parser('verbose', help='Set the terminal verbosity.')
 
   # subcommand args
   add_parser.add_argument('target', type=str,
@@ -66,6 +67,8 @@ def create_parser() -> argparse.ArgumentParser:
                           help='The name of the environment configuration to copy from.').completer = configs_completer
   cp_parser.add_argument('dest', type=str,
                           help='The name of the new environment configuration.').completer = configs_completer
+  verbose_parser.add_argument('on_off', type=str, choices=('on', 'off'),
+                               help="Turns verbose mode 'on' or 'off'.")
 
   # set a callback function for each subcommand
   add_parser.set_defaults(func=add)
@@ -76,6 +79,7 @@ def create_parser() -> argparse.ArgumentParser:
   clear_parser.set_defaults(func=clear)
   list_parser.set_defaults(func=list)
   show_parser.set_defaults(func=show)
+  verbose_parser.set_defaults(func=verbose)
 
   return parser
 
@@ -210,9 +214,20 @@ def set(args: argparse.Namespace) -> int:
     print('Error: Configuration {} does not exist.'.format(args.target))
     return 10
 
-  edit_metavariable_file('NRG_ENV', args.target)
+  if not edit_metavariable_file('NRG_ENV', args.target):
+    return 10
 
   print('Configuration set. Be sure to source your bashrc file.')
+
+  return 0
+
+def verbose(args: argparse.Namespace) -> int:
+
+  remapper = {'on': 'true',
+              'off': 'false'}
+
+  if not edit_metavariable_file('NRG_VERBOSE', remapper[args.on_off]):
+    return 10
 
   return 0
 
@@ -251,7 +266,7 @@ def set_variable_value(contents: str, variable: str, value: str) -> str:
     raise ValueError('Could not edit value of variable {} as the variable does not exist.')
 
   return re.sub('{}=.*'.format(variable),
-                'NRG_ENV={}'.format(value),
+                '{}={}'.format(variable, value),
                 contents)
 
 def main(args):
@@ -260,8 +275,14 @@ def main(args):
   argcomplete.autocomplete(parser)
   parsed_args = parser.parse_args(args)
 
+  try:
+    assert hasattr(parsed_args, 'func')
+  except AssertionError:
+    print('Program lacks a callback function to execute this command!')
+    return 1
+
   # call the function associated with the given subcommand
-  parsed_args.func(parsed_args)
+  return parsed_args.func(parsed_args)
 
 if __name__ == '__main__':
   result = main(sys.argv[1:])
