@@ -136,6 +136,11 @@ def rm(args: argparse.Namespace) -> int:
     print('Error: Failed to remove configuration file.')
     return 10
 
+  # if this was our active config, set the active config to 'none'
+  if args.target == get_active_config():
+    print("Warning: Deleted the active configuration. Setting configuration to 'none'.")
+    clear_active_config()
+
   return 0
 
 def modify(args: argparse.Namespace) -> int:
@@ -170,12 +175,15 @@ def list(_) -> int:
 
 def show(_) -> int:
 
-  if 'NRG_ENV' in os.environ and os.environ['NRG_ENV'] != 'none':
-    print(os.environ['NRG_ENV'])
-  else:
+  if get_active_config() == 'none':
     print('No environment currently set.')
+  else:
+    print(os.environ['NRG_ENV'])
 
   return 0
+
+def get_active_config() -> str:
+  return os.environ.get('NRG_ENV', 'none')
 
 def clear(_) -> int:
   
@@ -184,9 +192,7 @@ def clear(_) -> int:
   for file in config_files:
     rm(file.stem, None)
 
-  ns = argparse.Namespace()
-  setattr(ns, 'target', 'none')
-  set(ns)
+  clear_active_config()
 
   return 0
 
@@ -211,6 +217,12 @@ def set(args: argparse.Namespace) -> int:
   print('Configuration set. Be sure to source your bashrc file.')
 
   return 0
+
+def clear_active_config() -> None:
+  ''' Sets the active config to none  '''
+  ns = argparse.Namespace()
+  setattr(ns, 'target', 'none')
+  set(ns)
 
 def main(args):
   # parse arguments
