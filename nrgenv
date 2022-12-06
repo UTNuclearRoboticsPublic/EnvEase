@@ -25,31 +25,47 @@
 ############################################################################################
 
 import argparse
+import argcomplete
+from argcomplete.completers import ChoicesCompleter
+
 import os
 from pathlib import Path
 import shutil
 import subprocess
 import sys
+from typing import List
 
-def create_parser() -> argparse.ArgumentParser:
-  """ Parses the command line args. """
 
-  parser = argparse.ArgumentParser(description="Manages NRG environment configurations.")
-  parser.add_argument('command', type=str,
-                      help='add, cp, rm, modify, clear, list, show, or set')
-  parser.add_argument('target', type=str, nargs='?', default='',
-                      help="The name of the environment configuration to act on."
-                           "Not used with 'list' or 'show' commands.")
-  parser.add_argument('dest', type=str, nargs='?', default='',
-                      help="The destination configuration name, for use with the 'cp' command")
-
-  return parser
 
 class NrgEnv():
 
   def __init__(self):
     self.env_dir = Path.home() / '.nrg_env'
     self.configs_dir = self.env_dir / 'configs'
+
+    self.nullary_commands = {'list', 'show', 'clear'}
+    self.unary_commands = {'add', 'rm', 'modify', 'set'}
+    self.binary_commands = {'cp'}
+
+  def create_parser(self) -> argparse.ArgumentParser:
+    """ Parses the command line args. """
+    parser = argparse.ArgumentParser(description="Manages NRG environment configurations.")
+    parser.add_argument('command', type=str,
+                        choices=('add', 'cp', 'rm', 'modify', 'clear', 'list', 'show', 'set'),
+                        help='The action to take.')
+    parser.add_argument('target', type=str, nargs='?', default='',
+                        help="The name of the environment configuration to act on."
+                             "Not used with 'list' or 'show' commands.").completer = self.ConfigsCompleter
+    parser.add_argument('dest', type=str, nargs='?', default='',
+                        help="The destination configuration name, for use with the 'cp' command").completer = self.ConfigsCompleter
+
+    return parser
+
+  def ConfigsCompleter(self, prefix: str, **kwargs) -> List[str]:
+    print(prefix)
+    matches = Path(self.configs_dir).glob(prefix + '*.sh')
+
+    return [file.stem for file in matches]
 
   def add(self, target: str, _) -> int:
     src = Path('/opt/nuclearrobotics/config_template.sh')
@@ -180,24 +196,21 @@ class NrgEnv():
 
   def main(self, args):
     # parse arguments
-    parser = create_parser()
+    parser = self.create_parser()
+    argcomplete.autocomplete(parser)
     parsed_args = parser.parse_args(args[1:])
 
-    nullary_commands = {'list', 'show', 'clear'}
-    unary_commands = {'add', 'rm', 'modify', 'set'}
-    binary_commands = {'cp'}
-
-    if parsed_args.command in nullary_commands:
+    if parsed_args.command in self.nullary_commands:
       if parsed_args.target != '':
         print("Error: argument 'target' is not used with this command")
         parser.print_help()
         return 2
-    elif parsed_args.command in unary_commands:
+    elif parsed_args.command in self.unary_commands:
       if parsed_args.target == '':
         print("Error: argument 'target' is required for this command")
         parser.print_help()
         return 3
-    elif parsed_args.command in binary_commands:
+    elif parsed_args.command in self.binary_commands:
       if parsed_args.target == '' or parsed_args.dest == '':
         print("Error: arguments 'target' and 'dest' are required for this command")
         parser.print_help()

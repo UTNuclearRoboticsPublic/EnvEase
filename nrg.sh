@@ -27,6 +27,9 @@
 ### DO NOT TOUCH ###
 ####################
 
+# Sets up bash tab completion for our nrgenv script
+eval "$(register-python-argcomplete3 nrgenv)"
+
 # Look up our currently set NRG environment and source the config for it
 source $HOME/.nrg_env/cur_env.sh
 if [ $NRG_ENV == none ]; then
