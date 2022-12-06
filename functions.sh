@@ -52,6 +52,7 @@ function handle_alias_file()
   # Args:
   #   1. The class of the alias file. "platform", "tool", "project", or empty string
   #   2. The name of the alias set.
+  #   3. Verbosity (true or false)
   
   SCRIPT_DIR=$(dirname -- "$(readlink -f -- "${BASH_SOURCE[0]}")")
 
@@ -67,7 +68,10 @@ function handle_alias_file()
   
   # If we don't have the file, try to download it from the NRG GitHub
   if [ ! -f "$alias_path" ]; then
-    echo "Downloading alias file $alias_filename to $aliases_dir"
+
+    if [ $3 ]; then
+      echo "Downloading alias file $alias_filename to $aliases_dir"
+    fi
     
     local github_location=https://github.com/UTNuclearRobotics/nrg_bash_aliases/blob/master
     $SCRIPT_DIR/github_downloader.sh $github_location/$alias_class/$alias_filename $aliases_dir
