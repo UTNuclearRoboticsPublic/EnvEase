@@ -49,19 +49,39 @@ class NrgEnv():
 
   def create_parser(self) -> argparse.ArgumentParser:
     """ Parses the command line args. """
-    parser = argparse.ArgumentParser(description="Manages NRG environment configurations.")
+    parser = argparse.ArgumentParser(description="Manages NRG environment configurations.",
+                                     formatter_class=self.SmartFormatter)
     parser.add_argument('command', type=str,
                         choices=('add', 'cp', 'rm', 'modify', 'clear', 'list', 'show', 'set'),
-                        help='The action to take.')
+                        help="R|The action to take, where\n"
+                             "Nullary Commands\n"
+                             "\tclear  - Delete all the stored configs\n"
+                             "\tlist   - List all the stored configs\n"
+                             "\tshow   - Show the active config\n"
+                             "Unary Commands\n"
+                             "\tadd    - Create a new config\n"
+                             "\trm     - Remove a config\n"
+                             "\tmodify - Edit an existing config\n"
+                             "\tset    - Set the active config\n"
+                             "Binary Commands\n"
+                             "\tcp     - Copy a config with a new name")
     parser.add_argument('target', type=str, nargs='?', default='',
-                        help="The name of the environment configuration to act on."
+                        help="R|The name of the environment configuration to act on."
                              " Not used with nullary commands.").completer = self.configs_completer
     parser.add_argument('dest', type=str, nargs='?', default='',
-                        help="The destination configuration name. Only used for binary commands").completer = self.configs_completer
+                        help="R|The destination configuration name. Only used for binary commands.").completer = self.configs_completer
 
     return parser
 
-  def configs_completer(self, prefix: str, parsed_args, **kwargs) -> List[str]:
+  class SmartFormatter(argparse.HelpFormatter):
+    def _split_lines(self, text, width):
+        if text.startswith('R|'):
+            return text[2:].splitlines()  
+        # this is the RawTextHelpFormatter._split_lines
+        return argparse.HelpFormatter._split_lines(self, text, width)
+
+  def configs_completer(self, prefix: str, parsed_args, **_) -> List[str]:
+    ''' Tab completion for the target and dest parameters  '''
     if parsed_args.command in self.nullary_commands:
       return []
 
