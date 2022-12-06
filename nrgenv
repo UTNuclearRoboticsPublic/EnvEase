@@ -55,13 +55,13 @@ class NrgEnv():
                         help='The action to take.')
     parser.add_argument('target', type=str, nargs='?', default='',
                         help="The name of the environment configuration to act on."
-                             "Not used with 'list' or 'show' commands.").completer = self.ConfigsCompleter
+                             "Not used with 'list' or 'show' commands.").completer = self.configs_completer
     parser.add_argument('dest', type=str, nargs='?', default='',
-                        help="The destination configuration name, for use with the 'cp' command").completer = self.ConfigsCompleter
+                        help="The destination configuration name, for use with the 'cp' command").completer = self.configs_completer
 
     return parser
 
-  def ConfigsCompleter(self, prefix: str, **kwargs) -> List[str]:
+  def configs_completer(self, prefix: str, **kwargs) -> List[str]:
     print(prefix)
     matches = Path(self.configs_dir).glob(prefix + '*.sh')
 
