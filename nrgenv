@@ -55,15 +55,21 @@ class NrgEnv():
                         help='The action to take.')
     parser.add_argument('target', type=str, nargs='?', default='',
                         help="The name of the environment configuration to act on."
-                             "Not used with 'list' or 'show' commands.").completer = self.configs_completer
+                             " Not used with nullary commands.").completer = self.configs_completer
     parser.add_argument('dest', type=str, nargs='?', default='',
-                        help="The destination configuration name, for use with the 'cp' command").completer = self.configs_completer
+                        help="The destination configuration name. Only used for binary commands").completer = self.configs_completer
 
     return parser
 
-  def configs_completer(self, prefix: str, **kwargs) -> List[str]:
-    print(prefix)
-    matches = Path(self.configs_dir).glob(prefix + '*.sh')
+  def configs_completer(self, prefix: str, parsed_args, **kwargs) -> List[str]:
+    if parsed_args.command in self.nullary_commands:
+      return []
+
+    if parsed_args.command in self.unary_commands:
+      if parsed_args.target != '':
+        return []
+
+    matches = self.configs_dir.glob(prefix + '*.sh')
 
     return [file.stem for file in matches]
 
