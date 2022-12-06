@@ -26,7 +26,6 @@
 
 import argparse
 import argcomplete
-from argcomplete.completers import ChoicesCompleter
 
 import os
 from pathlib import Path
@@ -35,220 +34,193 @@ import subprocess
 import sys
 from typing import List
 
+env_dir = Path.home() / '.nrg_env'
+configs_dir = env_dir / 'configs'
 
+def create_parser() -> argparse.ArgumentParser:
+  """ Parses the command line args. """
+  parser = argparse.ArgumentParser(description="Manages NRG environment configurations.")
 
-class NrgEnv():
+  # subcommands
+  subparsers = parser.add_subparsers(title='subcommands')
+  add_parser = subparsers.add_parser('add', help='Create a new config')
+  rm_parser = subparsers.add_parser('rm', help='Remove a config')
+  modify_parser = subparsers.add_parser('modify', help='Modify an existing config')
+  set_parser = subparsers.add_parser('set', help='Set the active config')
+  clear_parser = subparsers.add_parser('clear', help='Delete all the stored configs')
+  list_parser = subparsers.add_parser('list', help='List all the stored configs')
+  show_parser = subparsers.add_parser('show', help='Show the active config')
+  cp_parser = subparsers.add_parser('cp', help='Copy a config with a new name')
 
-  def __init__(self):
-    self.env_dir = Path.home() / '.nrg_env'
-    self.configs_dir = self.env_dir / 'configs'
+  # subcommand args
+  add_parser.add_argument('target', type=str,
+                          help='The name of the new environment configuration.')
+  modify_parser.add_argument('target', type=str,
+                          help='The name of the environment configuration to modify.').completer = configs_completer
+  rm_parser.add_argument('target', type=str,
+                          help='The name of the environment configuration to remove.').completer = configs_completer
+  set_parser.add_argument('target', type=str,
+                          help='The name of the environment configuration to activate.').completer = configs_completer
+  cp_parser.add_argument('src', type=str,
+                          help='The name of the environment configuration to copy from.').completer = configs_completer
+  cp_parser.add_argument('dest', type=str,
+                          help='The name of the new environment configuration.').completer = configs_completer
 
-    self.nullary_commands = {'list', 'show', 'clear'}
-    self.unary_commands = {'add', 'rm', 'modify', 'set'}
-    self.binary_commands = {'cp'}
+  # set a callback function for each subcommand
+  add_parser.set_defaults(func=add)
+  rm_parser.set_defaults(func=rm)
+  modify_parser.set_defaults(func=modify)
+  set_parser.set_defaults(func=set)
+  cp_parser.set_defaults(func=cp)
+  clear_parser.set_defaults(func=clear)
+  list_parser.set_defaults(func=list)
+  show_parser.set_defaults(func=show)
 
-  def create_parser(self) -> argparse.ArgumentParser:
-    """ Parses the command line args. """
-    parser = argparse.ArgumentParser(description="Manages NRG environment configurations.",
-                                     formatter_class=self.SmartFormatter)
-    parser.add_argument('command', type=str,
-                        choices=('add', 'cp', 'rm', 'modify', 'clear', 'list', 'show', 'set'),
-                        help="R|The action to take, where\n"
-                             "Nullary Commands\n"
-                             "\tclear  - Delete all the stored configs\n"
-                             "\tlist   - List all the stored configs\n"
-                             "\tshow   - Show the active config\n"
-                             "Unary Commands\n"
-                             "\tadd    - Create a new config\n"
-                             "\trm     - Remove a config\n"
-                             "\tmodify - Edit an existing config\n"
-                             "\tset    - Set the active config\n"
-                             "Binary Commands\n"
-                             "\tcp     - Copy a config with a new name")
-    parser.add_argument('target', type=str, nargs='?', default='',
-                        help="R|The name of the environment configuration to act on."
-                             " Not used with nullary commands.").completer = self.configs_completer
-    parser.add_argument('dest', type=str, nargs='?', default='',
-                        help="R|The destination configuration name. Only used for binary commands.").completer = self.configs_completer
+  return parser
 
-    return parser
+def configs_completer(prefix: str, **_) -> List[str]:
+  ''' Tab completion for the target and dest parameters  '''
+  matches = configs_dir.glob(prefix + '*.sh')
+  return [file.stem for file in matches]
 
-  class SmartFormatter(argparse.HelpFormatter):
-    def _split_lines(self, text, width):
-        if text.startswith('R|'):
-            return text[2:].splitlines()  
-        # this is the RawTextHelpFormatter._split_lines
-        return argparse.HelpFormatter._split_lines(self, text, width)
+def add(args: argparse.Namespace) -> int:
+  src = Path('/opt/nuclearrobotics/config_template.sh')
+  dest = configs_dir / (args.target + '.sh')
 
-  def configs_completer(self, prefix: str, parsed_args, **_) -> List[str]:
-    ''' Tab completion for the target and dest parameters  '''
-    if parsed_args.command in self.nullary_commands:
-      return []
+  if not src.exists():
+    print('Error: Configuration template file is missing from expected location /opt/nuclearrobotics')
+    return 10
 
-    if parsed_args.command in self.unary_commands:
-      if parsed_args.target != '':
-        return []
+  if dest.exists():
+    print('Error: Configuration {} already exists.'.format(args.target))
+    return 10
 
-    matches = self.configs_dir.glob(prefix + '*.sh')
+  try:
+    shutil.copyfile(src, str(dest))
+  except:
+    print('Error: Failed to copy new configuration file from template.')
+    return 10
 
-    return [file.stem for file in matches]
+  return modify(args)
 
-  def add(self, target: str, _) -> int:
-    src = Path('/opt/nuclearrobotics/config_template.sh')
-    dest = self.configs_dir / (target + '.sh')
+def cp(args: argparse.Namespace) -> int:
+  src = configs_dir / (args.src + '.sh')
+  dest = configs_dir / (args.dest + '.sh')
 
-    if not src.exists():
-      print('Error: Configuration template file is missing from expected location /opt/nuclearrobotics')
-      return 10
+  if src == dest:
+    print('Error: Source and destination configuration names are the same.')
+    return 10
 
-    if dest.exists():
-      print('Error: Configuration {} already exists.'.format(target))
-      return 10
+  if not src.exists():
+    print('Error: Configuration {} does not exist.'.format(args.src))
+    return 10
 
-    try:
-      shutil.copyfile(src, str(dest))
-    except:
-      print('Error: Failed to copy new configuration file from template.')
-      return 10
+  try:
+    shutil.copyfile(str(src), str(dest))
+  except:
+    print('Error: Failed to copy configuration file.')
+    return 10
 
-    return self.modify(target)
+  return 0
 
-  def cp(self, target: str, dest: str) -> int:
-    src = self.configs_dir / (target + '.sh')
-    dest = self.configs_dir / (dest + '.sh')
+def rm(args: argparse.Namespace) -> int:
+  dest = configs_dir / (args.target + '.sh')
 
-    if src == dest:
-      print('Error: Source and destination configuration names are the same.'.format(target))
-      return 10
+  if not dest.exists():
+    print('Error: Configuration {} does not exist.'.format(args.target))
+    return 10
+  
+  try:
+    dest.unlink()
+  except:
+    print('Error: Failed to remove configuration file.')
+    return 10
 
-    if not src.exists():
-      print('Error: Configuration {} does not exist.'.format(target))
-      return 10
+  return 0
 
-    try:
-      shutil.copyfile(str(src), str(dest))
-    except:
-      print('Error: Failed to copy configuration file.')
-      return 10
+def modify(args: argparse.Namespace) -> int:
+  dest = configs_dir / (args.target + '.sh')
 
-    return 0
+  if not dest.exists():
+    print('Error: Configuration {} does not exist.'.format(args.target))
+    return 10
 
-  def rm(self, target: str, _) -> int:
-    dest = self.configs_dir / (target + '.sh')
+  try:
+    subprocess.run(['xdg-open', str(dest)], check=True)
+  except subprocess.CalledProcessError as err:
+    print('Error: Default text editor exited with code ' + str(err.returncode))
+    return 10
+  except:
+    print('Error: Failed to open default text editor.')
+    return 10
 
-    if not dest.exists():
-      print('Error: Configuration {} does not exist.'.format(target))
-      return 10
-    
-    try:
-      dest.unlink()
-    except:
-      print('Error: Failed to remove configuration file.')
-      return 10
+  return 0
 
-    return 0
+def list(_) -> int:
+  p = configs_dir.glob('**/*')
+  config_files = [x for x in p if x.is_file() and x.suffix == '.sh']
 
-  def modify(self, target: str, _) -> int:
-    dest = self.configs_dir / (target + '.sh')
+  for f in config_files:
+    print(f.stem)
 
-    if not dest.exists():
-      print('Error: Configuration {} does not exist.'.format(target))
-      return 10
+  if not config_files:
+    print('No configurations')
 
-    try:
-      subprocess.run(['xdg-open', str(dest)], check=True)
-    except subprocess.CalledProcessError as err:
-      print('Error: Default text editor exited with code ' + str(err.returncode))
-      return 10
-    except:
-      print('Error: Failed to open default text editor.')
-      return 10
+  return 0
 
-    return 0
+def show(_) -> int:
 
-  def list(self, *_) -> int:
-    p = self.configs_dir.glob('**/*')
-    config_files = [x for x in p if x.is_file() and x.suffix == '.sh']
+  if 'NRG_ENV' in os.environ and os.environ['NRG_ENV'] != 'none':
+    print(os.environ['NRG_ENV'])
+  else:
+    print('No environment currently set.')
 
-    for f in config_files:
-      print(f.stem)
+  return 0
 
-    if not config_files:
-      print('No configurations')
+def clear(_) -> int:
+  
+  # iterate over files in configs directory
+  config_files = Path(configs_dir).glob('*')
+  for file in config_files:
+    rm(file.stem, None)
 
-    return 0
+  ns = argparse.Namespace()
+  setattr(ns, 'target', 'none')
+  set(ns)
 
-  def show(self, *_) -> int:
+  return 0
 
-    if 'NRG_ENV' in os.environ and os.environ['NRG_ENV'] != 'none':
-      print(os.environ['NRG_ENV'])
-    else:
-      print('No environment currently set.')
+def set(args: argparse.Namespace) -> int:
+  config_file = configs_dir / (args.target + '.sh')
 
-    return 0
+  if not config_file.exists() and args.target != 'none':
+    print('Error: Configuration {} does not exist.'.format(args.target))
+    return 10
 
-  def clear(self, *_) -> int:
-    
-    # iterate over files in configs directory
-    config_files = Path(self.configs_dir).glob('*')
-    for file in config_files:
-      self.rm(file.stem, None)
+  dest = env_dir / 'cur_env.sh'
 
-    self.set('none', None)
+  try:
+    with open(dest,'w') as f:
+      f.write("export NRG_ENV=")
+      f.write(args.target)
+      f.write('\n')
+  except OSError as err:
+    print('Failed to edit cur_env.sh. ' + err.strerror)
+    return 10
 
-    return 0
+  print('Configuration set. Be sure to source your bashrc file.')
 
-  def set(self, target: str, _) -> int:
-    config_file = self.configs_dir / (target + '.sh')
+  return 0
 
-    if not config_file.exists() and target != 'none':
-      print('Error: Configuration {} does not exist.'.format(target))
-      return 10
+def main(args):
+  # parse arguments
+  parser = create_parser()
+  argcomplete.autocomplete(parser)
+  parsed_args = parser.parse_args(args)
 
-    dest = self.env_dir / 'cur_env.sh'
-
-    try:
-      with open(dest,'w') as f:
-        f.write("export NRG_ENV=")
-        f.write(target)
-        f.write('\n')
-    except OSError as err:
-      print('Failed to edit cur_env.sh. ' + err.strerror)
-      return 10
-
-    print('Configuration set. Be sure to source your bashrc file.')
-
-    return 0
-
-  def main(self, args):
-    # parse arguments
-    parser = self.create_parser()
-    argcomplete.autocomplete(parser)
-    parsed_args = parser.parse_args(args[1:])
-
-    if parsed_args.command in self.nullary_commands:
-      if parsed_args.target != '':
-        print("Error: argument 'target' is not used with this command")
-        parser.print_help()
-        return 2
-    elif parsed_args.command in self.unary_commands:
-      if parsed_args.target == '':
-        print("Error: argument 'target' is required for this command")
-        parser.print_help()
-        return 3
-    elif parsed_args.command in self.binary_commands:
-      if parsed_args.target == '' or parsed_args.dest == '':
-        print("Error: arguments 'target' and 'dest' are required for this command")
-        parser.print_help()
-        return 4
-    else:
-      print('Error: Unrecognized command ' + parsed_args.command)
-      parser.print_help()
-      return 1
-    
-    # use dispatch pattern to invoke method with same name
-    return getattr(self, parsed_args.command)(parsed_args.target, parsed_args.dest)
+  # call the function associated with the given subcommand
+  parsed_args.func(parsed_args)
 
 if __name__ == '__main__':
-  result = NrgEnv().main(sys.argv)
+  result = main(sys.argv[1:])
   exit(result)
