@@ -175,10 +175,12 @@ def list(_) -> int:
 
 def show(_) -> int:
 
-  if get_active_config() == 'none':
+  active_config = get_active_config()
+
+  if active_config == 'none':
     print('No environment currently set.')
   else:
-    print(os.environ['NRG_ENV'])
+    print(active_config)
 
   return 0
 
