@@ -102,13 +102,18 @@ unset ROS_DOMAIN_ID
 
 # ROS1
 if [ ! -z $ros1_distribution ]; then
-  if [ "$NRG_VERBOSE" == true ]; then
-    echo "Using ROS 1 distribution: $ros1_distribution"
-    echo "  Workspaces: $ros1_workspaces"
-    echo "  ros_master_uri: $ros_master_uri"
+  if [ -z $ros_master_uri ]; then
+    echo "Error: ros_master_uri must be provided for a ROS 1 distribution."
+  elif [ -z $network_interface ]; then
+    echo "Error: network_interface must be provided for a ROS 1 distribution."
+  else
+    if [ "$NRG_VERBOSE" == true ]; then
+      echo "Using ROS 1 distribution: $ros1_distribution"
+      echo "  Workspaces: $ros1_workspaces"
+      echo "  ros_master_uri: $ros_master_uri"
+    fi
+    source $script_dir/ros.sh $ros1_distribution $ros_master_uri $network_interface $ros1_workspaces
   fi
-
-  source $script_dir/ros.sh $ros1_distribution $ros_master_uri $network_interface $ros1_workspaces
 fi
 
 # suppresses an annoying warning when using a mixed-distribution environment
@@ -121,7 +126,7 @@ if [ ! -z $ros2_distribution ]; then
     echo "  Workspaces: $ros2_workspaces"
   fi
 
-  if [ -v ros_domain_id ]; then
+  if [ ! -z $ros_domain_id ]; then
     # Input validation
     if [ $ros_domain_id -lt 0 ] || [ $ros_domain_id -gt 232 ] || [[ $ros_domain_id -gt 101 && $ros_domain_id -lt 215 ]]; then
       echo "Invalid ROS_DOMAIN_ID value of $ros_domain_id. Must be in ranges [0,101] or [215,232]."
@@ -134,7 +139,7 @@ if [ ! -z $ros2_distribution ]; then
     if [ "$NRG_VERBOSE" == true ]; then
       echo "  ROS_DOMAIN_ID: $ros_domain_id"
     fi
-  elif [ -v ros_discovery_server ]; then
+  elif [ ! -z $ros_discovery_server ]; then
     # Use discovery server with FastDDS
     source $script_dir/ros.sh $ros2_distribution $ros_discovery_server "" $ros2_workspaces --discovery_server
 
@@ -142,7 +147,7 @@ if [ ! -z $ros2_distribution ]; then
       echo "  FastDDS discovery server at: $ros_discovery_server"
     fi
   else
-    echo "Error: ros_domain_id or ros_discovery_server must be provided with a ROS2 distribution."
+    echo "Error: ros_domain_id or ros_discovery_server must be provided for a ROS2 distribution."
   fi
 fi
 
