@@ -51,7 +51,7 @@ if [ "$NRG_VERBOSE" == true ]; then
 fi
 
 # Get our common aliases
-handle_alias_file "" "nrg_common" $NRG_VERBOSE
+handle_alias_file "" "nrg_common"
 
 # Enables tab completion in bash for our nrgenv script
 eval "$(register-python-argcomplete3 nrgenv)"
@@ -64,15 +64,15 @@ fi
 source $HOME/.nrg_env/configs/$NRG_ENV.sh
 
 for k in "${platform_aliases[@]}"; do
-  handle_alias_file "platform" $k $NRG_VERBOSE
+  handle_alias_file "platform" $k
 done
 
 for k in "${project_aliases[@]}"; do
-  handle_alias_file "project" $k $NRG_VERBOSE
+  handle_alias_file "project" $k
 done
 
 for k in "${tool_aliases[@]}"; do
-  handle_alias_file "tool" $k $NRG_VERBOSE
+  handle_alias_file "tool" $k
 done
 unset k
 
