@@ -1,6 +1,6 @@
 #!/bin/bash
 
-SCRIPT_DIR=$(dirname -- "$(readlink -f -- "${BASH_SOURCE[0]}")")
+script_dir=$(dirname -- "$(readlink -f -- "${BASH_SOURCE[0]}")")
 
-cp $SCRIPT_DIR/fastdds_discovery_server.service /etc/systemd/system
-cp $SCRIPT_DIR/launch_fastdds_discovery_server.sh /usr/bin
+cp $script_dir/fastdds_discovery_server.service /etc/systemd/system
+cp $script_dir/launch_fastdds_discovery_server.sh /usr/bin

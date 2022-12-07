@@ -46,7 +46,7 @@ if [ -z $NRG_VERBOSE ]; then
   return
 fi
 
-if [ $NRG_VERBOSE ]; then
+if [ "$NRG_VERBOSE" == true ]; then
   echo "Active environment configuration: $NRG_ENV"
 fi
 
@@ -83,28 +83,42 @@ if [ ! -z $ros1_distribution ] && [ ! -z $ros2_distribution ]; then
   export ROS1_INSTALL_PATH=/opt/ros/${ros1_distribution}/setup.bash
   export ROS2_INSTALL_PATH=/opt/ros/${ros2_distribution}/setup.bash
 
-  if [ $NRG_VERBOSE ]; then
+  if [ "$NRG_VERBOSE" == true ]; then
     echo "Using ros1_bridge from $ros1_distribution to $ros2_distribution"
   fi
+else
+  unset ROS1_INSTALL_PATH
+  unset ROS2_INSTALL_PATH
 fi
 
+# clear any pre-existing variables
+unset ROS_DISTRO
+unset ROS_IP
+unset ROS_MASTER_URI
+unset RMW_IMPLEMENTATION
+unset FASTRTPS_DEFAULT_PROFILES_FILE
+unset ROS_DISCOVERY_SERVER
+unset ROS_DOMAIN_ID
 
 # ROS1
 if [ ! -z $ros1_distribution ]; then
-  if [ $NRG_VERBOSE ]; then
+  if [ "$NRG_VERBOSE" == true ]; then
     echo "Using ROS 1 distribution: $ros1_distribution"
     echo "  Workspaces: $ros1_workspaces"
+    echo "  ros_master_uri: $ros_master_uri"
   fi
 
   source $script_dir/ros.sh $ros1_distribution $ros_master_uri $network_interface $ros1_workspaces
 fi
 
+# suppresses an annoying warning when using a mixed-distribution environment
+unset ROS_DISTRO
+
 # ROS2
 if [ ! -z $ros2_distribution ]; then
-  if [ $NRG_VERBOSE ]; then
+  if [ "$NRG_VERBOSE" == true ]; then
     echo "Using ROS 2 distribution: $ros2_distribution"
     echo "  Workspaces: $ros2_workspaces"
-    echo "  ros_master_uri: $ros_master_uri"
   fi
 
   if [ -v ros_domain_id ]; then
@@ -117,14 +131,14 @@ if [ ! -z $ros2_distribution ]; then
     # Use normal ROS2 discovery using multicasting
     source $script_dir/ros.sh $ros2_distribution $ros_domain_id "" $ros2_workspaces
 
-    if [ $NRG_VERBOSE ]; then
+    if [ "$NRG_VERBOSE" == true ]; then
       echo "  ROS_DOMAIN_ID: $ros_domain_id"
     fi
   elif [ -v ros_discovery_server ]; then
     # Use discovery server with FastDDS
     source $script_dir/ros.sh $ros2_distribution $ros_discovery_server "" $ros2_workspaces --discovery_server
 
-    if [ $NRG_VERBOSE ]; then
+    if [ "$NRG_VERBOSE" == true ]; then
       echo "  FastDDS discovery server at: $ros_discovery_server"
     fi
   else

@@ -23,7 +23,7 @@
 #
 ############################################################################################
 
-SCRIPT_DIR=$(dirname -- "$(readlink -f -- "${BASH_SOURCE[0]}")")
+script_dir=$(dirname -- "$(readlink -f -- "${BASH_SOURCE[0]}")")
 
 # ROS distribution to source
 ros_distro=$1
@@ -41,8 +41,9 @@ net_intfce=$3
 ros_workspaces=$4
 
 # Determine if this is a ROS1 or ROS2 distribution.
-source $SCRIPT_DIR/functions.sh
+source $script_dir/functions.sh
 ros_version=$(get_ros_version_for_distribution $ros_distro)
+
 
 if [ $ros_version -eq 1 ]; then
   # ROS1

@@ -54,7 +54,7 @@ function handle_alias_file()
   #   2. The name of the alias set.
   #   3. Verbosity (true or false)
   
-  SCRIPT_DIR=$(dirname -- "$(readlink -f -- "${BASH_SOURCE[0]}")")
+  script_dir=$(dirname -- "$(readlink -f -- "${BASH_SOURCE[0]}")")
 
   local alias_class=$1
   local aliases_dir=$HOME/.nrg_env/bash_aliases/$alias_class
@@ -74,7 +74,7 @@ function handle_alias_file()
     fi
     
     local github_location=https://github.com/UTNuclearRobotics/nrg_bash_aliases/blob/master
-    $SCRIPT_DIR/github_downloader.sh $github_location/$alias_class/$alias_filename $aliases_dir
+    $script_dir/github_downloader.sh $github_location/$alias_class/$alias_filename $aliases_dir
   fi
 
   source $alias_path

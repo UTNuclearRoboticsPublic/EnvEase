@@ -15,22 +15,22 @@ USER_HOME=$(getent passwd $SUDO_USER | cut -d: -f6)
 # files in this directory will be placed in the home directory of any newly created users
 SKEL_DIR=/etc/skel
 
-SCRIPT_DIR=$(dirname -- "$(readlink -f -- "${BASH_SOURCE[0]}")")
+script_dir=$(dirname -- "$(readlink -f -- "${BASH_SOURCE[0]}")")
 
 # install FastDDS discovery service
-/bin/bash $SCRIPT_DIR/fastdds/install_fastdds_service.sh
+/bin/bash $script_dir/fastdds/install_fastdds_service.sh
 
 # copy scripts to install locations
-cp $SCRIPT_DIR/nrg.sh $OPT_DIR
-cp $SCRIPT_DIR/ros.sh $OPT_DIR
-cp $SCRIPT_DIR/functions.sh $OPT_DIR
-cp $SCRIPT_DIR/github_downloader.sh $OPT_DIR
-cp $SCRIPT_DIR/config_template.sh $OPT_DIR
-cp -a $SCRIPT_DIR/skel/. $SKEL_DIR/
-cp $SCRIPT_DIR/nrgenv /bin
+cp $script_dir/nrg.sh $OPT_DIR
+cp $script_dir/ros.sh $OPT_DIR
+cp $script_dir/functions.sh $OPT_DIR
+cp $script_dir/github_downloader.sh $OPT_DIR
+cp $script_dir/config_template.sh $OPT_DIR
+cp -a $script_dir/skel/. $SKEL_DIR/
+cp $script_dir/nrgenv /bin
 
 # create NRG environment directory in the home directory
-cp -r $SCRIPT_DIR/skel/.nrg_env $USER_HOME
+cp -r $script_dir/skel/.nrg_env $USER_HOME
 chown -R $SUDO_USER $USER_HOME/.nrg_env
 
 # source our NRG config script in the bashrc
