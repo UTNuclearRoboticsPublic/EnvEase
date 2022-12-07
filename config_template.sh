@@ -1,21 +1,25 @@
 ### ROS User Parameters ###
 ## Common ROS Variables
-ros_distros=("galactic" "noetic")
 
-# List ROS workspaces in order. Later workspaces override earlier ones
+# You may combine a ROS1 distribution with a ROS2 distribution.
+# In that case, environment variables will be set to enable ros1_bridge
+ros1_distribution="noetic"
+ros2_distribution="galactic"
+
+# List ROS workspaces in order. Later workspaces overlay earlier ones.
 ros1_workspaces=("a_ros1_ws" "another_ros1_ws")
 ros2_workspaces=("a_ros2_ws")
-
-# If true, sets additional environment variables needed to operate the ros1_bridge package
-use_ros1_bridge=false
 
 ## ROS1 Specific Variables
 ros_master_uri=http://localhost:11311/
 
+# Set this to the network interface over which we will connect to roscore
+# Set lo if roscore will be on localhost
 # Use the command 'ip address show' to see your interface names
-network_interface=wlo1
+network_interface=lo
 
 ## ROS2 Specific Variables
+# Allowed ranges are [0,101] and [215,232]
 # Comment this out if you want to use FastDDS discovery servers
 ros_domain_id=0
 
@@ -28,8 +32,8 @@ ros_discovery_server="localhost:11311"
 
 
 
-### List project or platform specific alias sets needed for your work ###
-# https://github.com/UTNuclearRobotics/nrg_bash_aliases
+### List project, platform, or tool specific alias sets needed for your work ###
+# See stored alias sets here: https://github.com/UTNuclearRobotics/nrg_bash_aliases
 tool_aliases=("catkin_tools" "colcon")
 platform_aliases=()
 project_aliases=()
