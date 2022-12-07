@@ -201,7 +201,9 @@ def clear(_) -> int:
   # iterate over files in configs directory
   config_files = Path(configs_dir).glob('*')
   for file in config_files:
-    rm(file.stem, None)
+    ns = argparse.Namespace()
+    setattr(ns, 'target', file.stem)
+    rm(ns)
 
   clear_active_config()
 
@@ -217,7 +219,7 @@ def set(args: argparse.Namespace) -> int:
   if not edit_metavariable_file('NRG_ENV', args.target):
     return 10
 
-  print('Configuration set. Be sure to source your bashrc file.')
+  print('Configuration set to {}. Be sure to source your bashrc file.'.format(args.target))
 
   return 0
 
