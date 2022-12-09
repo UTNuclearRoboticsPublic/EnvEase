@@ -106,8 +106,9 @@ def add(args: argparse.Namespace) -> int:
 
   try:
     shutil.copyfile(src, str(dest))
-  except:
+  except OSError as err:
     print('Error: Failed to copy new configuration file from template.')
+    print(err.strerror)
     return 10
 
   return modify(args)
