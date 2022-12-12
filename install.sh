@@ -24,7 +24,9 @@ sudo cp -a skel/. $SKEL_DIR/
 /bin/bash nrgenv/install.sh
 
 # create NRG environment directory in the home directory
-sudo cp -r skel/.nrg_env $HOME
+cp -r skel/.nrg_env $HOME
+mkdir $HOME/.nrg_env/configs
+mkdir $HOME/.nrg_env/bash_aliases
 
 # source our NRG config script in the bashrc
 BASHRC=$HOME/.bashrc
