@@ -46,11 +46,11 @@ Follow these steps to set up these automated features on your Ubuntu machine.
       
   <li>Run the install script. This will place bash scripts in the location /opt/nuclearrobotics, install the nrgenv program to /bin, and place a configuration directory .nrg_env in your home directory. After running the install script, you may delete the nrg_bash directory.</li>
   
-      sudo ~/nrg_bash/install.sh
+      ~/nrg_bash/install.sh
       
   <li>To uninstall these features, run the uninstall script located in the nrg_bash directory.</li>
   
-      sudo ~/nrg_bash/uninstall.sh
+      ~/nrg_bash/uninstall.sh
       
 </ol>
 
