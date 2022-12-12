@@ -43,7 +43,8 @@ def create_parser() -> argparse.ArgumentParser:
   parser = argparse.ArgumentParser(description="Manages NRG environment configurations.")
 
   # subcommands
-  subparsers = parser.add_subparsers(title='subcommands')
+  subparsers = parser.add_subparsers(title='subcommands', dest='cmd')
+  subparsers.required = True
   add_parser = subparsers.add_parser('add', help='Create a new config')
   modify_parser = subparsers.add_parser('modify', help='Modify an existing config')
   cp_parser = subparsers.add_parser('cp', help='Copy a config with a new name')
@@ -278,9 +279,7 @@ def main(args):
   argcomplete.autocomplete(parser)
   parsed_args = parser.parse_args(args)
 
-  try:
-    assert hasattr(parsed_args, 'func')
-  except AssertionError:
+  if not hasattr(parsed_args, 'func'):
     print('Program lacks a callback function to execute this command!')
     return 1
 
