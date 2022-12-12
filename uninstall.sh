@@ -1,11 +1,11 @@
 #!/bin/bash
 
-# create install location in /opt
-OPT_DIR=/opt/nuclearrobotics
-mkdir -p $OPT_DIR
+if [ "$EUID" -eq 0 ]
+  then echo "Do not run as root"
+  exit
+fi
 
-# User home directory. This works even if the user runs the script as root
-USER_HOME=$(getent passwd $SUDO_USER | cut -d: -f6)
+OPT_DIR=/opt/nuclearrobotics
 
 # files in this directory will be placed in the home directory of any newly created users
 SKEL_DIR=/etc/skel
@@ -38,10 +38,10 @@ if [[ -f /bin/nrgenv ]]; then
 fi
 
 # remove NRG environment directory form user home
-rm -rf $USER_HOME/.nrg_env
+rm -rf $HOME/.nrg_env
 
 # remove the line from bashrc which sources our scripting
-BASHRC=$USER_HOME/.bashrc
+BASHRC=$HOME/.bashrc
 if grep -q "source ${OPT_DIR}/nrg.sh" ${BASHRC}; then
   sed -i '/nrg.sh/d' ${BASHRC}
 fi

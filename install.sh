@@ -1,5 +1,10 @@
 #!/bin/bash
 
+if [ "$EUID" -eq 0 ]
+  then echo "Do not run as root"
+  exit
+fi
+
 # create install location in /opt
 OPT_DIR=/opt/nuclearrobotics
 sudo mkdir -p $OPT_DIR
