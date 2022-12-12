@@ -16,9 +16,19 @@ USER_HOME=$(getent passwd $SUDO_USER | cut -d: -f6)
 SKEL_DIR=/etc/skel
 
 # remove FastDDS discovery service
-systemctl stop fastdds_discovery_server.service
-rm /etc/systemd/system/fastdds_discovery_server.service
-rm /usr/bin/launch_fastdds_discovery_server.sh
+SERVICENAME=fastdds_discovery_server
+if [[ $(systemctl list-units --full -all | grep -Fq "$SERVICENAME.service") ]]; then
+  if [[ $(systemctl is-active --quiet service) -eq 0 ]]; then
+    systemctl stop $SERVICENAME.service
+  fi
+  systemctl disable $SERVICENAME.service
+fi
+if [[ -f /etc/systemd/system/$SERVICENAME.service ]]; then
+  rm /etc/systemd/system/$SERVICENAME.service
+fi
+if [[ -f /usr/bin/$SERVICENAME.sh ]]; then
+  rm /usr/bin/$SERVICENAME.sh
+fi
 systemctl daemon-reload
 
 # remove scripts from install locations
@@ -28,7 +38,9 @@ rm -rf /etc/skel/install_vscode_extensions.sh
 rm -rf /etc/skel/README.md
 rm -rf /etc/skel/.bashrc
 
-rm /bin/nrgenv
+if [[ -f /bin/nrgenv ]]; then
+  rm /bin/nrgenv
+fi
 
 # remove NRG environment directory form user home
 rm -rf $USER_HOME/.nrg_env
