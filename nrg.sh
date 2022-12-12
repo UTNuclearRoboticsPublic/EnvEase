@@ -46,6 +46,9 @@ if [ -z $NRG_VERBOSE ]; then
   return
 fi
 
+export NRG_ENV
+export NRG_VERBOSE
+
 if [ "$NRG_VERBOSE" == true ]; then
   echo "Active environment configuration: $NRG_ENV"
 fi
