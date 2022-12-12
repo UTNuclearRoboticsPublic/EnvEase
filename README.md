@@ -42,7 +42,7 @@ Follow these steps to set up these automated features on your Ubuntu machine.
 <ol>
   <li>Clone this repo to your home directory.</li>
   
-      git clone git@github.com:UTNuclearRobotics/nrg_bash.git ~/
+      git clone git@github.com:UTNuclearRobotics/nrg_bash.git ~/nrg_bash
       
   <li>Run the install script. This will place bash scripts in the location /opt/nuclearrobotics, install the nrgenv program to /bin, and place a configuration directory .nrg_env in your home directory. After running the install script, you may delete the nrg_bash directory.</li>
   
