@@ -67,7 +67,7 @@ After installation, you will have access to the ```nrgenv``` program which enabl
   
       nrgenv set first_config
       
-  <li>After setting a new active configuration, you must source your bashrc script. Conveniently, the included NRG alias set provides a command for this.</li>
+  <li>After setting a new active configuration, you must source your bashrc script before it will take effect. Conveniently, the included NRG alias set provides a command for this.</li>
   
       source_bashrc
       
@@ -76,7 +76,10 @@ After installation, you will have access to the ```nrgenv``` program which enabl
       nrgenv show
 </ol>
 
-The variables you set in the ```first_config``` configuration file should be reflected in your bash environment going forward. You may go on to create more configurations for different work contexts, and switch between them as needed using ```nrgenv```. You can view the full instruction set of ```nrgenv``` by running it with the help flag.
+The variables you set in the ```first_config``` configuration file should be reflected in your bash environment going forward. You may go on to create more configurations for different work contexts, and switch between them as needed using ```nrgenv```.
+
+### nrgenv Help
+You can view the full instruction set of ```nrgenv``` by running it with the help flag.
 
 ```
 blake@blake-nrg-precision:~$ nrgenv -h
@@ -109,6 +112,25 @@ positional arguments:
 
 optional arguments:
   -h, --help  show this help message and exit
+```
+
+### Terminal Verbosity
+
+You can turn on verbose mode for your terminal environment using the nrgenv program
+
+    nrgenv verbose on
+    
+Afterwards, new terminals will print out their configuration details. This may be a useful reminder of your current settings if you frequently change them.
+```
+Active environment configuration: lanl
+Using ros1_bridge from noetic to galactic
+Using ROS 1 distribution: noetic
+  Workspaces: catkin_ws
+  ros_master_uri: http://localhost:11311/
+Using ROS 2 distribution: galactic
+  Workspaces: lanl_ws
+  ROS_DOMAIN_ID: 0
+blake@blake-nrg-precision:~$ 
 ```
 
 ## Bash Alias Management
