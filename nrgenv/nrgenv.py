@@ -49,6 +49,7 @@ def create_parser() -> argparse.ArgumentParser:
   modify_parser = subparsers.add_parser('modify', help='Modify an existing config')
   cp_parser = subparsers.add_parser('cp', help='Copy a config with a new name')
   rm_parser = subparsers.add_parser('rm', help='Remove a config')
+  rename_parser = subparsers.add_parser('rename', help='Rename a config')
   set_parser = subparsers.add_parser('set', help='Set the active config')
   clear_parser = subparsers.add_parser('clear', help='Delete all the stored configs')
   list_parser = subparsers.add_parser('list', help='List all the stored configs')
@@ -62,6 +63,10 @@ def create_parser() -> argparse.ArgumentParser:
                           help='The name of the environment configuration to modify.').completer = configs_completer
   rm_parser.add_argument('target', type=str,
                           help='The name of the environment configuration to remove.').completer = configs_completer
+  rename_parser.add_argument('target', type=str,
+                              help='The name of the environment configuration to rename.').completer = configs_completer
+  rename_parser.add_argument('dest', type=str,
+                              help='The new name.').completer = configs_completer
   set_parser.add_argument('target', type=str,
                           help='The name of the environment configuration to activate.').completer = configs_completer
   cp_parser.add_argument('src', type=str,
@@ -74,6 +79,7 @@ def create_parser() -> argparse.ArgumentParser:
   # set a callback function for each subcommand
   add_parser.set_defaults(func=add)
   rm_parser.set_defaults(func=rm)
+  rename_parser.set_defaults(func=rename)
   modify_parser.set_defaults(func=modify)
   set_parser.set_defaults(func=set)
   cp_parser.set_defaults(func=cp)
@@ -151,6 +157,38 @@ def rm(args: argparse.Namespace) -> int:
   if args.target == get_active_config():
     print("Warning: Deleted the active configuration. Setting configuration to 'none'.")
     clear_active_config()
+
+  return 0
+
+def rename(args: argparse.Namespace) -> int:
+  target = configs_dir / (args.target + '.sh')
+  dest = configs_dir / (args.dest + '.sh')
+
+  if target == dest:
+    print('Error: Original and new names are the same. No operation performed.')
+    return
+
+  if not target.exists():
+    print('Error: Configuration {} does not exist.'.format(args.target))
+    return 10
+
+  if dest.exists():
+    print('Error: Configuration {} already exists.'.format(args.dest))
+    return 10
+
+  try:
+    os.rename(target, dest)
+  except OSError as error:
+    print('Error: Failed to rename configuration file.')
+    print(error.strerror)
+    return 10
+
+  # if this was our active config, update the variable
+  if args.target == get_active_config():
+    print('Warning: The active configuration was renamed.')
+    ns = argparse.Namespace()
+    setattr(ns, 'target', args.dest)
+    return set(ns)
 
   return 0
 
@@ -239,7 +277,7 @@ def clear_active_config() -> None:
   ''' Sets the active config to none  '''
   ns = argparse.Namespace()
   setattr(ns, 'target', 'none')
-  set(ns)
+  return set(ns)
 
 def edit_metavariable_file(variable: str, value: str) -> bool:
   metavar_file = env_dir / 'cur_env.sh'
