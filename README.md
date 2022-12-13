@@ -54,7 +54,7 @@ Follow these steps to set up these automated features on your Ubuntu machine.
       
 </ol>
 
-## NRG Environment Configuration
+## NRG Environment Configuration With nrgenv
 
 After installation, you will have access to the ```nrgenv``` program which enables you to create and manage environment profiles from the command line. These profiles allow you to switch between different work contexts (projects, platforms, or toolsets) without editing your bashrc script. An example workflow is given below.
 
@@ -78,7 +78,38 @@ After installation, you will have access to the ```nrgenv``` program which enabl
 
 The variables you set in the ```first_config``` configuration file should be reflected in your bash environment going forward. You may go on to create more configurations for different work contexts, and switch between them as needed using ```nrgenv```. You can view the full instruction set of ```nrgenv``` by running it with the help flag.
 
-    nrgenv -h
+```
+blake@blake-nrg-precision:~$ nrgenv -h
+usage: nrgenv [-h] {add,modify,cp,rm,rename,set,clear,list,show,verbose} ...
+
+Manages NRG environment configurations.
+
+optional arguments:
+  -h, --help            show this help message and exit
+
+subcommands:
+  {add,modify,cp,rm,rename,set,clear,list,show,verbose}
+    add                 Create a new config
+    modify              Modify an existing config
+    cp                  Copy a config with a new name
+    rm                  Remove a config
+    rename              Rename a config
+    set                 Set the active config
+    clear               Delete all the stored configs
+    list                List all the stored configs
+    show                Show the active config
+    verbose             Set the terminal verbosity.
+```
+```
+blake@blake-nrg-precision:~$ nrgenv add -h
+usage: nrgenv add [-h] target
+
+positional arguments:
+  target      The name of the new environment configuration.
+
+optional arguments:
+  -h, --help  show this help message and exit
+```
 
 ## Bash Alias Management
 The script will source any alias files that you specify in the ```platform_aliases``` and ```project_aliases``` variables of the environment configuration. For example, setting
