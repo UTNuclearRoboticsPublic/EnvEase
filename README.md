@@ -149,4 +149,4 @@ The installation script places a set of bash script files in ```/opt/nuclearrobo
 
     source /opt/nuclearrobotics/nrg.sh
     
-This line leads into the scripting functions that process your environment configuration as set using the ```nrgenv``` program. Your configurations are stored in the directory `~/.nrg_env```, along with the NRG bash alias files that have been downloaded for your configurations.
+This line leads into the scripting functions that process your environment configuration as set using the ```nrgenv``` program. Your configurations are stored in the directory ```~/.nrg_env```, along with the NRG bash alias files that have been downloaded for your configurations.
