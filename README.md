@@ -143,3 +143,10 @@ will cause the script to download the files ```spot_aliases``` and ```walrus_ali
 You are strongly encouraged to add and maintain alias files for your robot platforms and projects, to aid other NRG members in using your work. Do so by commiting to the [aliases repository](https://github.com/UTNuclearRobotics/nrg_bash_aliases).
 
 You may also put personal aliases in ```~/.bash_aliases``` as usual. This should only be for aliases that are very specific to your own needs that other NRG members would not benefit from having access to.
+
+## Implementation Details
+The installation script places a set of bash script files in ```/opt/nuclearrobotics```. It also adds a line to the end of your ```~/.bashrc``` script, which is run whenever you open a new terminal.
+
+    source /opt/nuclearrobotics/nrg.sh
+    
+This line leads into the scripting functions that process your environment configuration as set using the ```nrgenv``` program. Your configurations are stored in the directory `~/.nrg_env```, along with the NRG bash alias files that have been downloaded for your configurations.
