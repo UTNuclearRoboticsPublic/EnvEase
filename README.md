@@ -44,6 +44,12 @@ Follow these steps to set up these automated features on your Ubuntu machine.
   
       git clone git@github.com:UTNuclearRobotics/nrg_bash.git ~/nrg_bash
       
+  <li>Open your bashrc script and remove any existing lines for ROS configuration.</li>
+  
+      gedit ~/.bashrc
+      
+  (Or whatever other text editor you prefer)
+      
   <li>Run the install script. This will place bash scripts in the location /opt/nuclearrobotics, install the nrgenv program to /bin, and place a configuration directory .nrg_env in your home directory. After running the install script, you may delete the nrg_bash directory.</li>
   
       ~/nrg_bash/install.sh
