@@ -33,7 +33,11 @@ ros_discovery_server="localhost:11311"
 
 
 ### List project, platform, or tool specific alias sets needed for your work ###
-# See stored alias sets here: https://github.com/UTNuclearRobotics/nrg_bash_aliases
+# These can be downloaded from a GitHub repository
+alias_repo_owner=""
+alias_repo_name=""
+repo_auth_token="your GitHub token, if needed to access a private repository"
+
 tool_aliases=("catkin_tools" "colcon")
 platform_aliases=()
 project_aliases=()
