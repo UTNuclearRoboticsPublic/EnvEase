@@ -1,39 +1,30 @@
-# nrg_bash
+# EnvEase
 
-This is a set of bash scripts for automating and managing the Linux environment setup for NRG members. It handles the setup of ROS1 and/or ROS2 environments, and downloads and sources bash alias files for your specific robot platforms and projects.
+This is a set of bash scripts for automating and managing the Linux environment setup for ROS software development. It handles the setup of ROS1 and/or ROS2 environments, and downloads and sources bash alias files for your specific robot platforms and projects.
 
 ## Package Details
 ### Maintainer
-Blake Anderson  
+Blake Anderson
+blakeanderson@utexas.edu
 Nuclear and Applied Robotics Group  
 The University of Texas at Austin
 
 ### GitHub
 https://github.com/UTNuclearRobotics/nrg_bash
 
-### Copyright
+### Copyright & BSD-3 License
 
-Copyright© The University of Texas at Austin, 2022. All rights reserved.
+Copyright© The University of Texas at Austin, 2023. All rights reserved.
     
-All files within this directory are subject to the following, unless an alternative
-license is explicitly included within the text of each file.
+Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
 
-    This software and documentation constitute an unpublished work
-    and contain valuable trade secrets and proprietary information
-    belonging to the University. None of the foregoing material may be
-    copied or duplicated or disclosed without the express, written
-    permission of the University. THE UNIVERSITY EXPRESSLY DISCLAIMS ANY
-    AND ALL WARRANTIES CONCERNING THIS SOFTWARE AND DOCUMENTATION,
-    INCLUDING ANY WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A
-    PARTICULAR PURPOSE, AND WARRANTIES OF PERFORMANCE, AND ANY WARRANTY
-    THAT MIGHT OTHERWISE ARISE FROM COURSE OF DEALING OR USAGE OF TRADE.
-    NO WARRANTY IS EITHER EXPRESS OR IMPLIED WITH RESPECT TO THE USE OF
-    THE SOFTWARE OR DOCUMENTATION. Under no circumstances shall the
-    University be liable for incidental, special, indirect, direct or
-    consequential damages or loss of profits, interruption of business,
-    or related expenses which may arise from use of software or documentation,
-    including but not limited to those resulting from defects in software
-    and/or documentation, or loss or inaccuracy of data of any kind.
+1. Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+
+2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+
+3. Neither the name of the copyright holder nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS “AS IS” AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
 ## Installation and Uninstallation
@@ -42,7 +33,7 @@ Follow these steps to set up these automated features on your Ubuntu machine.
 <ol>
   <li>Clone this repo to your home directory.</li>
   
-      git clone git@github.com:UTNuclearRobotics/nrg_bash.git ~/nrg_bash
+      git clone git@github.com:UTNuclearRobotics/EnvEase.git ~/EnvEase
       
   <li>Open your bashrc script and remove any existing lines for ROS configuration.</li>
   
@@ -50,48 +41,48 @@ Follow these steps to set up these automated features on your Ubuntu machine.
       
   (Or whatever other text editor you prefer)
       
-  <li>Run the install script. This will place bash scripts in the location /opt/nuclearrobotics, install the nrgenv program to /bin, and place a configuration directory .nrg_env in your home directory. After running the install script, you may delete the nrg_bash directory.</li>
+  <li>Run the install script. This will place bash scripts in the location /opt/EnvEase, install the nrgenv program to /bin, and place a configuration directory .nrg_env in your home directory. After running the install script, you may delete the envease directory.</li>
   
-      ~/nrg_bash/install.sh
+      ~/EnvEase/install.sh
       
-  <li>To uninstall these features, run the uninstall script located in the nrg_bash directory.</li>
+  <li>To uninstall these features, run the uninstall script located in the EnvEase directory.</li>
   
-      ~/nrg_bash/uninstall.sh
+      ~/EnvEase/uninstall.sh
       
 </ol>
 
-## NRG Environment Configuration With nrgenv
+## Environment Configuration With EnvEase command-line tool
 
-After installation, you will have access to the ```nrgenv``` program which enables you to create and manage environment profiles from the command line. These profiles allow you to switch between different work contexts (projects, platforms, or toolsets) without editing your bashrc script. An example workflow is given below.
+After installation, you will have access to the ```envease``` program which enables you to create and manage environment profiles from the command line. These profiles allow you to switch between different work contexts (projects, platforms, or toolsets) without editing your bashrc script. An example workflow is given below.
 
 <ol>
-  <li>After installation, you will initially not have any stored environment configurations. Create one using the nrgenv tool. The new configuration file will be opened in your default text editor. Fill out the configuration per the comments in the file, then save and close.</li>
+  <li>After installation, you will initially not have any stored environment configurations. Create one using the envease tool. The new configuration file will be opened in your default text editor. Fill out the configuration per the comments in the file, then save and close.</li>
   
-      nrgenv add first_config
+      envease add first_config
       
   <li>Then set the newly created configuration as the active configuration.</li>
   
-      nrgenv set first_config
+      envease set first_config
       
-  <li>After setting a new active configuration, you must source your bashrc script before it will take effect. Conveniently, the included NRG alias set provides a command for this.</li>
+  <li>After setting a new active configuration, you must source your bashrc script before it will take effect.</li>
   
-      source_bashrc
+      source ~/.bashrc
       
-  <li>After sourcing the bashrc, you can check the active environment configuration.</li>
+  <li>After sourcing the bashrc file, you can check the active environment configuration.</li>
   
-      nrgenv show
+      envease show
 </ol>
 
-The variables you set in the ```first_config``` configuration file should be reflected in your bash environment going forward. You may go on to create more configurations for different work contexts, and switch between them as needed using ```nrgenv```.
+The variables you set in the ```first_config``` configuration file should be reflected in your bash environment going forward. You may go on to create more configurations for different work contexts, and switch between them as needed using ```envease```.
 
 ### nrgenv Help
-You can view the full instruction set of ```nrgenv``` by running it with the help flag.
+You can view the full instruction set of ```envease``` by running it with the help flag.
 
 ```
-blake@blake-nrg-precision:~$ nrgenv -h
-usage: nrgenv [-h] {add,modify,cp,rm,rename,set,clear,list,show,verbose} ...
+$ envease -h
+usage: envease [-h] {add,modify,cp,rm,rename,set,clear,list,show,verbose} ...
 
-Manages NRG environment configurations.
+Manages environment configurations for ROS software development.
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -110,8 +101,8 @@ subcommands:
     verbose             Set the terminal verbosity.
 ```
 ```
-blake@blake-nrg-precision:~$ nrgenv add -h
-usage: nrgenv add [-h] target
+$ envease add -h
+usage: envease add [-h] target
 
 positional arguments:
   target      The name of the new environment configuration.
@@ -122,9 +113,9 @@ optional arguments:
 
 ### Terminal Verbosity
 
-You can turn on verbose mode for your terminal environment using the nrgenv program
+You can turn on verbose mode for your terminal environment using the envease program
 
-    nrgenv verbose on
+    envease verbose on
     
 Afterwards, new terminals will print out their configuration details. This may be a useful reminder of your current settings if you frequently change them.
 ```
@@ -151,8 +142,8 @@ You are strongly encouraged to add and maintain alias files for your robot platf
 You may also put personal aliases in ```~/.bash_aliases``` as usual. This should only be for aliases that are very specific to your own needs that other NRG members would not benefit from having access to.
 
 ## Implementation Details
-The installation script places a set of bash script files in ```/opt/nuclearrobotics```. It also adds a line to the end of your ```~/.bashrc``` script, which is run whenever you open a new terminal.
+The installation script places a set of bash script files in ```/opt/EnvEase```. It also adds a line to the end of your ```~/.bashrc``` script, which is run whenever you open a new terminal.
 
-    source /opt/nuclearrobotics/nrg.sh
+    source /opt/EnvEase/nrg.sh
     
-This line leads into the scripting functions that process your environment configuration as set using the ```nrgenv``` program. Your configurations are stored in the directory ```~/.nrg_env```, along with the NRG bash alias files that have been downloaded for your configurations.
+This line leads into the scripting functions that process your environment configuration as set using the ```envease``` program. Your configurations are stored in the directory ```~/.envease```, along with the NRG bash alias files that have been downloaded for your configurations.
