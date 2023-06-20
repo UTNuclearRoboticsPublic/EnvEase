@@ -242,6 +242,12 @@ def get_active_config() -> str:
   return os.environ.get('ENVEASE_ENV', 'none')
 
 def clear(_) -> int:
+
+  # get user confirmation
+  confirm = input("Are you sure you want to delete all your configuration profiles? Type 'yes' to confirm: ")
+
+  if confirm != 'yes':
+    return 0
   
   # iterate over files in configs directory
   config_files = Path(configs_dir).glob('*')
