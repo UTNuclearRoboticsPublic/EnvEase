@@ -68,9 +68,9 @@ if [ $ENVEASE_ENV == none ]; then
 fi
 source $HOME/.envease/configs/$ENVEASE_ENV.sh
 
-if [ -n "$owner" ] || [ -n "$repo" ]; then
-  owner=""
-  repo=""
+if [ -z $alias_repo_owner ] || [ -z $alias_repo_name ]; then
+  alias_repo_owner=""
+  alias_repo_name=""
   repo_auth_token=""
 fi
 

@@ -28,7 +28,6 @@
 #
 ############################################################################################
 
-
 # Determine which ROS version a ROS distribution belongs to
 function get_ros_version_for_distribution()
 {
@@ -79,30 +78,38 @@ function handle_alias_file()
   
   # If we don't have the file, try to download it from the NRG GitHub
   if [ ! -f "$alias_path" ]; then
-    if [ -n "$owner" ] || [ -n "$repo" ]; then
+    if [ -z $owner ] || [ -z $repo ]; then
       echo "GitHub repository information was not provided. Cannot pull alias file for argument $2."
       return
     fi
 
     echo "Downloading alias file $alias_filename to $aliases_dir"
 
-    if [-n $token ]; then
-      curl \
+    local url="https://api.github.com/repos/$owner/$repo/contents/$alias_class/$alias_filename?ref=master"
+    if [ -n "$token" ]; then
+      local result=$(curl \
+      --fail \
       -H "Accept: application/vnd.github.v3.raw" \
       -H "Authorization: Bearer $5"\
       -H "X-GitHub-Api-Version: 2022-11-28" \
       -L \
-      -s \
+      -s -S \
       -o $alias_path \
-      https://api.github.com/repos/$owner/$repo/contents/$alias_class/$alias_filename?ref=master
+      $url)
     else
-      curl \
+      local result=$(curl \
+      --fail \
       -H "Accept: application/vnd.github.v3.raw" \
       -H "X-GitHub-Api-Version: 2022-11-28" \
       -L \
-      -s \
+      -s -S \
       -o $alias_path \
-      https://api.github.com/repos/$owner/$repo/contents/$alias_class/$alias_filename?ref=master
+      $url)
+    fi
+
+    if [ -n "$result" ]; then
+      echo "Failed to download alias file!"
+      return
     fi
   fi
 

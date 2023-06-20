@@ -38,9 +38,6 @@ fi
 OPT_DIR=/opt/envease
 sudo mkdir -p $OPT_DIR
 
-# files in this directory will be placed in the home directory of any newly created users
-SKEL_DIR=/etc/skel
-
 cd "$(dirname "${BASH_SOURCE[0]}")"
 
 # install FastDDS discovery service
@@ -66,3 +63,6 @@ BASHRC=$HOME/.bashrc
 if ! grep -q "source ${OPT_DIR}/envease.sh" ${BASHRC}; then
     echo "source ${OPT_DIR}/envease.sh" >> $BASHRC
 fi
+
+# Enables tab completion in bash for envease tool
+eval "$(register-python-argcomplete3 envease)"
