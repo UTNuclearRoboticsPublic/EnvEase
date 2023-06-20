@@ -43,7 +43,7 @@ Follow these steps to set up these automated features on your Ubuntu machine.
       
   (Or whatever other text editor you prefer)
       
-  <li>Run the install script. This will place bash scripts in the location /opt/EnvEase, install the envease program to /bin, and place a configuration directory .envease in your home directory. After running the install script, you may delete the envease directory.</li>
+  <li>Run the install script. This will place bash scripts in the location /opt/EnvEase, install the envease program to /bin, and place a configuration directory .envease in your home directory. After running the install script, you may delete the cloned EnvEase directory.</li>
   
       ~/EnvEase/install.sh
       
