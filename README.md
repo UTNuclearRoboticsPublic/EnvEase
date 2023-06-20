@@ -144,6 +144,6 @@ You may also put personal aliases in ```~/.bash_aliases``` as usual. This should
 ## Implementation Details
 The installation script places a set of bash script files in ```/opt/EnvEase```. It also adds a line to the end of your ```~/.bashrc``` script, which is run whenever you open a new terminal.
 
-    source /opt/EnvEase/nrg.sh
+    source /opt/EnvEase/envease.sh
     
 This line leads into the scripting functions that process your environment configuration as set using the ```envease``` program. Your configurations are stored in the directory ```~/.envease```, along with the NRG bash alias files that have been downloaded for your configurations.
