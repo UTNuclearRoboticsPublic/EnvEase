@@ -10,7 +10,7 @@ Nuclear and Applied Robotics Group
 The University of Texas at Austin
 
 ### GitHub
-https://github.com/UTNuclearRobotics/nrg_bash
+https://github.com/UTNuclearRoboticsPublic/EnvEase
 
 ### Copyright & BSD-3 License
 
@@ -41,7 +41,7 @@ Follow these steps to set up these automated features on your Ubuntu machine.
       
   (Or whatever other text editor you prefer)
       
-  <li>Run the install script. This will place bash scripts in the location /opt/EnvEase, install the nrgenv program to /bin, and place a configuration directory .nrg_env in your home directory. After running the install script, you may delete the envease directory.</li>
+  <li>Run the install script. This will place bash scripts in the location /opt/EnvEase, install the envease program to /bin, and place a configuration directory .envease in your home directory. After running the install script, you may delete the envease directory.</li>
   
       ~/EnvEase/install.sh
       
@@ -75,7 +75,7 @@ After installation, you will have access to the ```envease``` program which enab
 
 The variables you set in the ```first_config``` configuration file should be reflected in your bash environment going forward. You may go on to create more configurations for different work contexts, and switch between them as needed using ```envease```.
 
-### nrgenv Help
+### envease Help
 You can view the full instruction set of ```envease``` by running it with the help flag.
 
 ```
@@ -127,7 +127,7 @@ Using ROS 1 distribution: noetic
 Using ROS 2 distribution: galactic
   Workspaces: lanl_ws
   ROS_DOMAIN_ID: 0
-blake@blake-nrg-precision:~$ 
+blake@blake-workstation:~$ 
 ```
 
 ## Bash Alias Management
@@ -135,15 +135,13 @@ The script will source any alias files that you specify in the ```platform_alias
 
     platform_aliases=("spot" "walrus")  
     
-will cause the script to download the files ```spot_aliases``` and ```walrus_aliases``` from GitHub, and source them. The script will always source the file ```nrg_common_aliases``` as well.
-
-You are strongly encouraged to add and maintain alias files for your robot platforms and projects, to aid other NRG members in using your work. Do so by commiting to the [aliases repository](https://github.com/UTNuclearRobotics/nrg_bash_aliases).
+will cause the script to download the files ```spot_aliases``` and ```walrus_aliases``` from GitHub, and source them. The GitHub repository is specified using the ```alias_repo_owner``` and ```alias_repo_name``` variables of the environment configuration. The script will always source the file ```common_aliases``` as well.
 
 You may also put personal aliases in ```~/.bash_aliases``` as usual. This should only be for aliases that are very specific to your own needs that other NRG members would not benefit from having access to.
 
 ## Implementation Details
 The installation script places a set of bash script files in ```/opt/EnvEase```. It also adds a line to the end of your ```~/.bashrc``` script, which is run whenever you open a new terminal.
 
-    source /opt/EnvEase/nrg.sh
+    source /opt/EnvEase/envease.sh
     
 This line leads into the scripting functions that process your environment configuration as set using the ```envease``` program. Your configurations are stored in the directory ```~/.envease```, along with the NRG bash alias files that have been downloaded for your configurations.

@@ -1,26 +1,31 @@
 #! /usr/bin/python3
 ############################################################################################
-#      Copyright : Copyright© The University of Texas at Austin, 2022. All rights reserved.
+# Copyright : Copyright© The University of Texas at Austin, 2023. All rights reserved.
 #                
-#          All files within this directory are subject to the following, unless an alternative
-#          license is explicitly included within the text of each file.
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
 #
-#          This software and documentation constitute an unpublished work
-#          and contain valuable trade secrets and proprietary information
-#          belonging to the University. None of the foregoing material may be
-#          copied or duplicated or disclosed without the express, written
-#          permission of the University. THE UNIVERSITY EXPRESSLY DISCLAIMS ANY
-#          AND ALL WARRANTIES CONCERNING THIS SOFTWARE AND DOCUMENTATION,
-#          INCLUDING ANY WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A
-#          PARTICULAR PURPOSE, AND WARRANTIES OF PERFORMANCE, AND ANY WARRANTY
-#          THAT MIGHT OTHERWISE ARISE FROM COURSE OF DEALING OR USAGE OF TRADE.
-#          NO WARRANTY IS EITHER EXPRESS OR IMPLIED WITH RESPECT TO THE USE OF
-#          THE SOFTWARE OR DOCUMENTATION. Under no circumstances shall the
-#          University be liable for incidental, special, indirect, direct or
-#          consequential damages or loss of profits, interruption of business,
-#          or related expenses which may arise from use of software or documentation,
-#          including but not limited to those resulting from defects in software
-#          and/or documentation, or loss or inaccuracy of data of any kind.
+# * Redistributions of source code must retain the above copyright notice, this
+#   list of conditions and the following disclaimer.
+#
+# * Redistributions in binary form must reproduce the above copyright notice,
+#   this list of conditions and the following disclaimer in the documentation
+#   and/or other materials provided with the distribution.
+#
+# * Neither the name of python-odmltables nor the names of its
+#   contributors may be used to endorse or promote products derived from
+#   this software without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+# FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
 ############################################################################################
 
@@ -35,12 +40,12 @@ import subprocess
 import sys
 from typing import List
 
-env_dir = Path.home() / '.nrg_env'
+env_dir = Path.home() / '.envease'
 configs_dir = env_dir / 'configs'
 
 def create_parser() -> argparse.ArgumentParser:
   """ Parses the command line args. """
-  parser = argparse.ArgumentParser(description="Manages NRG environment configurations.")
+  parser = argparse.ArgumentParser(description="Manages environment configurations for ROS software development.")
 
   # subcommands
   subparsers = parser.add_subparsers(title='subcommands', dest='cmd')
@@ -96,7 +101,7 @@ def configs_completer(prefix: str, **_) -> List[str]:
   return [file.stem for file in matches]
 
 def add(args: argparse.Namespace) -> int:
-  src = Path('/opt/nuclearrobotics/config_template.sh')
+  src = Path('/opt/EnvEase/config_template.sh')
   dest = configs_dir / (args.target + '.sh')
 
   if args.target == 'none':
@@ -104,7 +109,7 @@ def add(args: argparse.Namespace) -> int:
     return 10
 
   if not src.exists():
-    print('Error: Configuration template file is missing from expected location /opt/nuclearrobotics')
+    print('Error: Configuration template file is missing from expected location /opt/EnvEase')
     return 10
 
   if dest.exists():
@@ -234,7 +239,7 @@ def show(_) -> int:
   return 0
 
 def get_active_config() -> str:
-  return os.environ.get('NRG_ENV', 'none')
+  return os.environ.get('ENVEASE_ENV', 'none')
 
 def clear(_) -> int:
   
@@ -256,7 +261,7 @@ def set(args: argparse.Namespace) -> int:
     print('Error: Configuration {} does not exist.'.format(args.target))
     return 10
 
-  if not edit_metavariable_file('NRG_ENV', args.target):
+  if not edit_metavariable_file('ENVEASE_ENV', args.target):
     return 10
 
   print('Configuration set to {}. Be sure to source your bashrc file.'.format(args.target))
@@ -268,7 +273,7 @@ def verbose(args: argparse.Namespace) -> int:
   remapper = {'on': 'true',
               'off': 'false'}
 
-  if not edit_metavariable_file('NRG_VERBOSE', remapper[args.on_off]):
+  if not edit_metavariable_file('ENVEASE_VERBOSE', remapper[args.on_off]):
     return 10
 
   return 0

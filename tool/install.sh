@@ -1,4 +1,3 @@
-#!/bin/bash
 ############################################################################################
 # Copyright : Copyright© The University of Texas at Austin, 2023. All rights reserved.
 #                
@@ -29,46 +28,12 @@
 #
 ############################################################################################
 
+cd "$(dirname "${BASH_SOURCE[0]}")"
 
-if [ "$EUID" -eq 0 ]
-  then echo "Do not run as root"
-  exit
-fi
+sudo apt install python3-pip
+python3 -m pip install -q pipreqs
+pipreqs --force .
+sudo python3 -m pip install -r ./requirements.txt
 
-OPT_DIR=/opt/EnvEase
-
-# remove FastDDS discovery service
-SERVICENAME=fastdds_discovery_server
-if [[ $(systemctl list-units --full -all | grep -Fq "$SERVICENAME.service") ]]; then
-  if [[ $(systemctl is-active --quiet service) -eq 0 ]]; then
-    sudo systemctl stop $SERVICENAME.service
-  fi
-  sudo systemctl disable $SERVICENAME.service
-fi
-if [[ -f /etc/systemd/system/$SERVICENAME.service ]]; then
-  sudo rm /etc/systemd/system/$SERVICENAME.service
-fi
-if [[ -f /usr/bin/$SERVICENAME.sh ]]; then
-  sudo rm /usr/bin/$SERVICENAME.sh
-fi
-sudo systemctl daemon-reload
-
-# remove scripts from install locations
-sudo rm -rf $OPT_DIR
-sudo rm -rf /etc/skel/.envease
-sudo rm -rf /etc/skel/install_vscode_extensions.sh
-sudo rm -rf /etc/skel/README.md
-sudo rm -rf /etc/skel/.bashrc
-
-if [[ -f /bin/envease ]]; then
-  sudo rm /bin/envease
-fi
-
-# remove envease config directory from user home
-rm -rf $HOME/.envease
-
-# remove the line from bashrc which sources our scripting
-BASHRC=$HOME/.bashrc
-if grep -q "source ${OPT_DIR}/envease.sh" ${BASHRC}; then
-  sed -i '/envease.sh/d' ${BASHRC}
-fi
+sudo cp envease.py /bin/envease
+rm requirements.txt

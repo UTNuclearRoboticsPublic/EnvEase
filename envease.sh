@@ -1,25 +1,30 @@
 ############################################################################################
-#      Copyright : Copyright© The University of Texas at Austin, 2022. All rights reserved.
+# Copyright : Copyright© The University of Texas at Austin, 2023. All rights reserved.
 #                
-#          All files within this directory are subject to the following, unless an alternative
-#          license is explicitly included within the text of each file.
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
 #
-#          This software and documentation constitute an unpublished work
-#          and contain valuable trade secrets and proprietary information
-#          belonging to the University. None of the foregoing material may be
-#          copied or duplicated or disclosed without the express, written
-#          permission of the University. THE UNIVERSITY EXPRESSLY DISCLAIMS ANY
-#          AND ALL WARRANTIES CONCERNING THIS SOFTWARE AND DOCUMENTATION,
-#          INCLUDING ANY WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A
-#          PARTICULAR PURPOSE, AND WARRANTIES OF PERFORMANCE, AND ANY WARRANTY
-#          THAT MIGHT OTHERWISE ARISE FROM COURSE OF DEALING OR USAGE OF TRADE.
-#          NO WARRANTY IS EITHER EXPRESS OR IMPLIED WITH RESPECT TO THE USE OF
-#          THE SOFTWARE OR DOCUMENTATION. Under no circumstances shall the
-#          University be liable for incidental, special, indirect, direct or
-#          consequential damages or loss of profits, interruption of business,
-#          or related expenses which may arise from use of software or documentation,
-#          including but not limited to those resulting from defects in software
-#          and/or documentation, or loss or inaccuracy of data of any kind.
+# * Redistributions of source code must retain the above copyright notice, this
+#   list of conditions and the following disclaimer.
+#
+# * Redistributions in binary form must reproduce the above copyright notice,
+#   this list of conditions and the following disclaimer in the documentation
+#   and/or other materials provided with the distribution.
+#
+# * Neither the name of python-odmltables nor the names of its
+#   contributors may be used to endorse or promote products derived from
+#   this software without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+# FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
 ############################################################################################
 
@@ -27,41 +32,41 @@
 ### DO NOT TOUCH ###
 ####################
 
-# Directory of this script (normally /opt/nuclearrobotics)
+# Directory of this script (normally /opt/EnvEase)
 script_dir=$(dirname -- "$(readlink -f -- "${BASH_SOURCE[0]}")")
 
 # Various functions
 source $script_dir/functions.sh
 
-# Look up our currently active NRG environment
-source $HOME/.nrg_env/cur_env.sh
+# Look up our currently active EnvEase environment
+source $HOME/.envease/cur_env.sh
 
-if [ -z $NRG_ENV ]; then
-  echo "Error: Variable NRG_ENV not found in $HOME/.nrg_env/cur_env.sh. The file is deformed."
+if [ -z $ENVEASE_ENV ]; then
+  echo "Error: Variable ENVEASE_ENV not found in $HOME/.envease/cur_env.sh. The file is deformed."
   return
 fi
 
-if [ -z $NRG_VERBOSE ]; then
-  echo "Error: Variable NRG_VERBOSE not found in $HOME/.nrg_env/cur_env.sh. The file is deformed."
+if [ -z $ENVEASE_VERBOSE ]; then
+  echo "Error: Variable ENVEASE_VERBOSE not found in $HOME/.envease/cur_env.sh. The file is deformed."
   return
 fi
 
-export NRG_ENV
-export NRG_VERBOSE
+export ENVEASE_ENV
+export ENVEASE_VERBOSE
 
-if [ "$NRG_VERBOSE" == true ]; then
-  echo "Active environment configuration: $NRG_ENV"
+if [ "$ENVEASE_VERBOSE" == true ]; then
+  echo "Active environment configuration: $ENVEASE_ENV"
 fi
 
-# Enables tab completion in bash for our nrgenv script
-eval "$(register-python-argcomplete3 nrgenv)"
+# Enables tab completion in bash for our envease script
+eval "$(register-python-argcomplete3 envease)"
 
 # Source the active NRG environment config
-if [ $NRG_ENV == none ]; then
-  echo "No NRG configuration set. Use the nrgenv command to set one."
+if [ $ENVEASE_ENV == none ]; then
+  echo "No NRG configuration set. Use the envease command to set one."
   return
 fi
-source $HOME/.nrg_env/configs/$NRG_ENV.sh
+source $HOME/.envease/configs/$ENVEASE_ENV.sh
 
 if [ -n "$owner" ] || [ -n "$repo" ]; then
   owner=""
@@ -70,7 +75,7 @@ if [ -n "$owner" ] || [ -n "$repo" ]; then
 fi
 
 # Get our common aliases
-handle_alias_file "" "nrg_common" $alias_repo_owner $alias_repo_name $repo_auth_token
+handle_alias_file "" "common" $alias_repo_owner $alias_repo_name $repo_auth_token
 
 for k in "${platform_aliases[@]}"; do
   handle_alias_file "platform" $k $alias_repo_owner $alias_repo_name $repo_auth_token
@@ -92,7 +97,7 @@ if [ ! -z $ros1_distribution ] && [ ! -z $ros2_distribution ]; then
   export ROS1_INSTALL_PATH=/opt/ros/${ros1_distribution}/setup.bash
   export ROS2_INSTALL_PATH=/opt/ros/${ros2_distribution}/setup.bash
 
-  if [ "$NRG_VERBOSE" == true ]; then
+  if [ "$ENVEASE_VERBOSE" == true ]; then
     echo "Using ros1_bridge from $ros1_distribution to $ros2_distribution"
   fi
 else
@@ -117,7 +122,7 @@ if [ ! -z $ros1_distribution ]; then
   elif [ -z $network_interface ]; then
     echo "Error: network_interface must be provided for a ROS 1 distribution."
   else
-    if [ "$NRG_VERBOSE" == true ]; then
+    if [ "$ENVEASE_VERBOSE" == true ]; then
       echo "Using ROS 1 distribution: $ros1_distribution"
       echo "  Workspaces: $ros1_workspaces"
       echo "  ros_master_uri: $ros_master_uri"
@@ -131,7 +136,7 @@ unset ROS_DISTRO
 
 # ROS2
 if [ ! -z $ros2_distribution ]; then
-  if [ "$NRG_VERBOSE" == true ]; then
+  if [ "$ENVEASE_VERBOSE" == true ]; then
     echo "Using ROS 2 distribution: $ros2_distribution"
     echo "  Workspaces: $ros2_workspaces"
   fi
@@ -146,14 +151,14 @@ if [ ! -z $ros2_distribution ]; then
     # Use normal ROS2 discovery using multicasting
     source $script_dir/ros.sh $ros2_distribution $ros_domain_id "" $ros2_workspaces
 
-    if [ "$NRG_VERBOSE" == true ]; then
+    if [ "$ENVEASE_VERBOSE" == true ]; then
       echo "  ROS_DOMAIN_ID: $ros_domain_id"
     fi
   elif [ ! -z $ros_discovery_server ]; then
     # Use discovery server with FastDDS
     source $script_dir/ros.sh $ros2_distribution $ros_discovery_server "" $ros2_workspaces --discovery_server
 
-    if [ "$NRG_VERBOSE" == true ]; then
+    if [ "$ENVEASE_VERBOSE" == true ]; then
       echo "  FastDDS discovery server at: $ros_discovery_server"
     fi
   else
