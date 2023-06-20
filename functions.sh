@@ -52,6 +52,9 @@ function handle_alias_file()
   # Args:
   #   1. The class of the alias file. "platform", "tool", "project", or empty string
   #   2. The name of the alias set.
+  #   3. The owner of the GitHub aliases repository
+  #   4. The name of the aliases repository.
+  #   5. The GitHub authorization token.
   
   script_dir=$(dirname -- "$(readlink -f -- "${BASH_SOURCE[0]}")")
 
@@ -59,6 +62,10 @@ function handle_alias_file()
   local aliases_dir=$HOME/.nrg_env/bash_aliases/$alias_class
   local alias_filename=$2_aliases
   local alias_path=$aliases_dir/$alias_filename
+
+  local owner=$3
+  local repo=$4
+  local token=$5
   
   # Create the subdirectory if it doesn't exist
   if [ ! -d "$aliases_dir" ]; then
@@ -67,10 +74,31 @@ function handle_alias_file()
   
   # If we don't have the file, try to download it from the NRG GitHub
   if [ ! -f "$alias_path" ]; then
+    if [ -n "$owner" ] || [ -n "$repo" ]; then
+      echo "GitHub repository information was not provided. Cannot pull alias file for argument $2."
+      return
+    fi
+
     echo "Downloading alias file $alias_filename to $aliases_dir"
-    
-    local github_location=https://github.com/UTNuclearRobotics/nrg_bash_aliases/blob/master
-    $script_dir/github_downloader.sh $github_location/$alias_class/$alias_filename $aliases_dir
+
+    if [-n $token ]; then
+      curl \
+      -H "Accept: application/vnd.github.v3.raw" \
+      -H "Authorization: Bearer $5"\
+      -H "X-GitHub-Api-Version: 2022-11-28" \
+      -L \
+      -s \
+      -o $alias_path \
+      https://api.github.com/repos/$owner/$repo/contents/$alias_class/$alias_filename?ref=master
+    else
+      curl \
+      -H "Accept: application/vnd.github.v3.raw" \
+      -H "X-GitHub-Api-Version: 2022-11-28" \
+      -L \
+      -s \
+      -o $alias_path \
+      https://api.github.com/repos/$owner/$repo/contents/$alias_class/$alias_filename?ref=master
+    fi
   fi
 
   source $alias_path

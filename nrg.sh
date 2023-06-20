@@ -53,9 +53,6 @@ if [ "$NRG_VERBOSE" == true ]; then
   echo "Active environment configuration: $NRG_ENV"
 fi
 
-# Get our common aliases
-handle_alias_file "" "nrg_common"
-
 # Enables tab completion in bash for our nrgenv script
 eval "$(register-python-argcomplete3 nrgenv)"
 
@@ -66,16 +63,25 @@ if [ $NRG_ENV == none ]; then
 fi
 source $HOME/.nrg_env/configs/$NRG_ENV.sh
 
+if [ -n "$owner" ] || [ -n "$repo" ]; then
+  owner=""
+  repo=""
+  repo_auth_token=""
+fi
+
+# Get our common aliases
+handle_alias_file "" "nrg_common" $alias_repo_owner $alias_repo_name $repo_auth_token
+
 for k in "${platform_aliases[@]}"; do
-  handle_alias_file "platform" $k
+  handle_alias_file "platform" $k $alias_repo_owner $alias_repo_name $repo_auth_token
 done
 
 for k in "${project_aliases[@]}"; do
-  handle_alias_file "project" $k
+  handle_alias_file "project" $k $alias_repo_owner $alias_repo_name $repo_auth_token
 done
 
 for k in "${tool_aliases[@]}"; do
-  handle_alias_file "tool" $k
+  handle_alias_file "tool" $k $alias_repo_owner $alias_repo_name $repo_auth_token
 done
 unset k
 
@@ -102,6 +108,7 @@ unset RMW_IMPLEMENTATION
 unset FASTRTPS_DEFAULT_PROFILES_FILE
 unset ROS_DISCOVERY_SERVER
 unset ROS_DOMAIN_ID
+unset ROS_PACKAGE_PATH
 
 # ROS1
 if [ ! -z $ros1_distribution ]; then
@@ -168,3 +175,6 @@ unset project_aliases
 unset tool_aliases
 unset network_interface
 unset use_ros1_bridge
+unset alias_repo_owner
+unset alias_repo_name
+unset repo_auth_token
