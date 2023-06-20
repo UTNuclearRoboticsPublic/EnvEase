@@ -1,11 +1,13 @@
 # EnvEase
 
-This is a set of bash scripts for automating and managing the Linux environment setup for ROS software development. It handles the setup of ROS1 and/or ROS2 environments, and downloads and sources bash alias files for your specific robot platforms and projects.
+**EnvEase is currently a work in progress and may change without notice.**
+
+Environment Ease (EnvEase) is a set of automations for managing the Linux shell environment for ROS software development. Users can fluidly create and switch between environmental profiles for different development projects, largely eliminating the need for manual configuration of the bashrc file. It is compatible with both ROS1 and ROS2 environments, including mixed environments using `ros1_bridge`. The automation can also download and source bash alias files from GitHub for your specific robot platforms and projects.
 
 ## Package Details
 ### Maintainer
-Blake Anderson
-blakeanderson@utexas.edu
+Blake Anderson  
+blakeanderson@utexas.edu  
 Nuclear and Applied Robotics Group  
 The University of Texas at Austin
 
