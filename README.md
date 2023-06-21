@@ -35,7 +35,7 @@ Follow these steps to set up these automated features on your Ubuntu machine.
 <ol>
   <li>Clone this repo to your home directory.</li>
   
-      git clone git@github.com:UTNuclearRobotics/EnvEase.git ~/EnvEase
+      git clone git@github.com:UTNuclearRoboticsPuic/EnvEase.git ~/EnvEase
       
   <li>Open your bashrc script and remove any existing lines for ROS configuration.</li>
   
