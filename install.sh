@@ -35,7 +35,7 @@ if [ "$EUID" -eq 0 ]
 fi
 
 # create install location in /opt
-OPT_DIR=/opt/envease
+OPT_DIR=/opt/EnvEase
 sudo mkdir -p $OPT_DIR
 
 cd "$(dirname "${BASH_SOURCE[0]}")"
