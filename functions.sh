@@ -76,7 +76,7 @@ function handle_alias_file()
     mkdir -p $aliases_dir
   fi
   
-  # If we don't have the file, try to download it from the NRG GitHub
+  # If we don't have the file, try to download it from GitHub
   if [ ! -f "$alias_path" ]; then
     if [ -z $owner ] || [ -z $repo ]; then
       echo "GitHub repository information was not provided. Cannot pull alias file for argument $2."

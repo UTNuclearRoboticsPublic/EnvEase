@@ -61,9 +61,9 @@ fi
 # Enables tab completion in bash for our envease script
 eval "$(register-python-argcomplete3 envease)"
 
-# Source the active NRG environment config
+# Source the active EnvEase environment config
 if [ $ENVEASE_ENV == none ]; then
-  echo "No NRG configuration set. Use the envease command to set one."
+  echo "No EnvEase configuration set. Use the envease command to set one."
   return
 fi
 source $HOME/.envease/configs/$ENVEASE_ENV.sh
