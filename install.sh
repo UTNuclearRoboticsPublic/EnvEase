@@ -61,7 +61,7 @@ fi
 # source our config script in the bashrc
 BASHRC=$HOME/.bashrc
 if ! grep -q "source ${OPT_DIR}/envease.sh" ${BASHRC}; then
-    echo "source ${OPT_DIR}/envease.sh" >> $BASHRC
+    echo -e "\nsource ${OPT_DIR}/envease.sh" >> $BASHRC
 fi
 
 # Enables tab completion in bash for envease tool
