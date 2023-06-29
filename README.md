@@ -2,7 +2,7 @@
 
 **EnvEase is currently a work in progress and may change without notice.**
 
-Environment Ease (EnvEase) is a set of automations for managing the Linux shell environment for ROS software development. Users can fluidly create and switch between environmental profiles for different development projects, largely eliminating the need for manual configuration of the bashrc file. It is compatible with both ROS1 and ROS2 environments, including mixed environments using `ros1_bridge`. The automation can also download and source bash alias files from GitHub for your specific robot platforms and projects.
+Environment Ease (EnvEase) is a set of automations for managing the Linux shell environment for ROS software development. Users can fluidly create and switch between environmental profiles for different development projects, largely eliminating the need for manual editing of the bashrc file. It is compatible with both ROS1 and ROS2 environments, including mixed environments using `ros1_bridge`. The automation can also download and source bash alias files from GitHub for your specific robot platforms and projects.
 
 ## Package Details
 ### Maintainer
@@ -35,7 +35,7 @@ Follow these steps to set up these automated features on your Ubuntu machine.
 <ol>
   <li>Clone this repo to your home directory.</li>
   
-      git clone git@github.com:UTNuclearRobotics/EnvEase.git ~/EnvEase
+      git clone git@github.com:UTNuclearRoboticsPublic/EnvEase.git ~/EnvEase
       
   <li>Open your bashrc script and remove any existing lines for ROS configuration.</li>
   
