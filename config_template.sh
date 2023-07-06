@@ -1,43 +1,68 @@
-### ROS User Parameters ###
-## Common ROS Variables
+############################
+### ROS1 User Parameters ###
+############################
+# Delete this whole section if this configuration does not use ROS1.
 
-# You may combine a ROS1 distribution with a ROS2 distribution.
-# In that case, environment variables will be set to enable ros1_bridge
+# Set the ROS1 distribution you wish to use.
+# Use all lowercase (melodic, noetic, etc.)
 ros1_distribution="noetic"
-ros2_distribution="galactic"
 
-# List ROS workspaces in order. Later workspaces overlay earlier ones.
-ros1_workspaces=("a_ros1_ws" "another_ros1_ws")
-ros2_workspaces=("a_ros2_ws")
+# List ROS1 workspaces in order, giving the paths to the roots of the workspaces.
+# Paths can either be absolute (starting with /) or relative to the home directory.
+# Later workspaces overlay earlier ones.
+ros1_workspaces=("relative_path" "/absolute_path")
 
-## ROS1 Specific Variables
+# Set this to the URI of the machine running roscore.
+# ros_master_uri defaults to 'http://localhost:11311/' if not set.
 ros_master_uri=http://localhost:11311/
 
-# Set this to the network interface over which we will connect to roscore
-# Set lo if roscore will be on localhost
-# Use the command 'ip address show' to see your interface names
+# Set this to the network interface over which we will connect to the ROS master machine.
+# Envease will determine you IP address for that interface as set ROS_IP to it.
+# Use the CLI command 'ip address show' to see your interface names.
+# network_interface defaults to the loopback interface 'lo' if not set.
 network_interface=lo
 
-## ROS2 Specific Variables
+
+
+############################
+### ROS2 User Parameters ###
+############################
+# Delete this whole section if this configuration does not use ROS2.
+
+# Set the ROS2 distribution you wish to use.
+# Use all lowercase (galactic, humble, etc.)
+ros2_distribution="humble"
+
+# List ROS2 workspaces in order, giving the paths to the roots of the workspaces.
+# Paths can either be absolute (starting with /) or relative to the home directory.
+# Later workspaces overlay earlier ones.
+ros2_workspaces=("relative_path" "/absolute_path")
+
 # Allowed ranges are [0,101] and [215,232]
-# Comment this out if you want to use FastDDS discovery servers
+# Delete this out if you want to use FastDDS discovery servers (see below)
 ros_domain_id=0
 
-# This will be used to connect to FastDDS discovery server(s)
-# This should be the IP or hostname of the machine(s) running the discovery server(s)
-# Generally, discovery servers function similarly to ROS1's master URI
-# Separate machine names with semicolons
+# List (semicolon-separated) the URIs of machine running FastDDS discovery server(s)
 # This is ignored if ros_domain_id is defined above!
+# https://fast-dds.docs.eprosima.com/en/latest/fastdds/ros2/discovery_server/ros2_discovery_server.html
 ros_discovery_server="localhost:11311"
 
 
 
-### List project, platform, or tool specific alias sets needed for your work ###
-# These can be downloaded from a GitHub repository
-alias_repo_owner=""
-alias_repo_name=""
-repo_auth_token="your GitHub token, if needed to access a private repository"
+##########################
+### Bash Alias Imports ###
+##########################
+# EnvEase allows you to download and source portable sets of Bash aliases.
+# List the alias sets for this configuration these using the array variables below.
 
+# Specific to certain development tools such as IDEs, build systems, container systems, etc.
 tool_aliases=("catkin_tools" "colcon")
+# Specific to certain hardware.
 platform_aliases=()
+# Specific to certain projects.
 project_aliases=()
+
+# The alias sets above will be downloaded from the GitHub repository specified using the following variables.
+alias_repo_owner="The GitHub account or org that owns the alias repo."
+alias_repo_name="The name of the alias repo."
+repo_auth_token="Your GitHub access token, if needed to access a private repository."

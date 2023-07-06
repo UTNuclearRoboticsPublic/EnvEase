@@ -68,6 +68,7 @@ if [ $ENVEASE_ENV == none ]; then
 fi
 source $HOME/.envease/configs/$ENVEASE_ENV.sh
 
+# If the GitHub repo is not specified, set all the Gitub variables to empty string.
 if [ -z $alias_repo_owner ] || [ -z $alias_repo_name ]; then
   alias_repo_owner=""
   alias_repo_name=""
@@ -118,9 +119,9 @@ unset ROS_PACKAGE_PATH
 # ROS1
 if [ ! -z $ros1_distribution ]; then
   if [ -z $ros_master_uri ]; then
-    echo "Error: ros_master_uri must be provided for a ROS 1 distribution."
+    ros_master_uri=http://localhost:11311/
   elif [ -z $network_interface ]; then
-    echo "Error: network_interface must be provided for a ROS 1 distribution."
+    network_interface=lo
   else
     if [ "$ENVEASE_VERBOSE" == true ]; then
       echo "Using ROS 1 distribution: $ros1_distribution"

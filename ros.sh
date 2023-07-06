@@ -65,7 +65,13 @@ if [ $ros_version -eq 1 ]; then
   unset ip_addr
   
   for ws in ${ros_workspaces[@]}; do
-    source $HOME/$ws/devel/setup.bash
+    if [[ "$DIR" = /* ]]; then
+      # absolute path
+      source $ws/devel/setup.bash
+    else
+      # path relative to home directory
+      source $HOME/$ws/devel/setup.bash
+    fi
   done
   unset ws
   
