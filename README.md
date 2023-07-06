@@ -133,11 +133,11 @@ blake@blake-workstation:~$
 ```
 
 ## Bash Alias Management
-The script will source any alias files that you specify in the ```platform_aliases``` and ```project_aliases``` variables of the environment configuration. For example, setting
+The script will source any alias files that you list in the ```platform_aliases```, ```tool_aliases```, and ```project_aliases``` array variables of the environment configuration. For example, setting
 
     platform_aliases=("spot" "walrus")  
     
-will cause the script to download the files ```spot_aliases``` and ```walrus_aliases``` from GitHub, and source them. The GitHub repository is specified using the ```alias_repo_owner``` and ```alias_repo_name``` variables of the environment configuration. The script will always source the file ```common_aliases``` as well.
+will cause the script to download the files ```spot_aliases``` and ```walrus_aliases``` from GitHub, and source them. The GitHub repository is specified using the ```alias_repo_owner``` and ```alias_repo_name``` variables of the environment configuration. The script will always source the file ```common_aliases``` as well. See an example and template for such a GitHub repository [here](https://github.com/UTNuclearRoboticsPublic/example_envease_alias_repo).
 
 You may also put personal aliases in ```~/.bash_aliases``` as usual. This should only be for aliases that are very specific to your own needs that your colleagues would not benefit from having access to.
 
